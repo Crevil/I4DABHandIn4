@@ -1,0 +1,13 @@
+EF
+
+CRUD
+
+BS: GUI
+
+JSON
+
+Stored procedures
+
+Triggers to all manipulating operations
+
+View to db
