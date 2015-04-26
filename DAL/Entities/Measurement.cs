@@ -6,9 +6,9 @@
         public string Timestamp { get; set; }
 
         public Sensor Sensor { get; set; }
-        public int SensorId { get; set; }
+        public int sensorId { get; set; }
         public Location Location { get; set; }
-        public int LocationId { get; set; }
+        public int appartmentId { get; set; }
 
         public Measurement()
         {

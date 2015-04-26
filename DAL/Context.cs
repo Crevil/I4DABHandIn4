@@ -21,7 +21,7 @@ namespace DAL
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Measurement>().HasKey(m => new {m.LocationId, m.SensorId});
+            //modelBuilder.Entity<Measurement>().HasKey(m => new {m.LocationId, m.SensorId});
 
             modelBuilder.Entity<Measurement>()
                 .HasRequired(m => m.Location);
