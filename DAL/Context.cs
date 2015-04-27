@@ -15,16 +15,16 @@ namespace DAL
             
         }
 
-        public DbSet<Location> Locations { get; set; }
+        public DbSet<Appartment> Locations { get; set; }
         public DbSet<Sensor> Sensors { get; set; }
         public DbSet<Measurement> Measurements { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            //modelBuilder.Entity<Measurement>().HasKey(m => new {m.LocationId, m.SensorId});
+            modelBuilder.Entity<Measurement>().HasKey(m => new {m.AppartmentId, m.SensorId});
 
             modelBuilder.Entity<Measurement>()
-                .HasRequired(m => m.Location);
+                .HasRequired(m => m.Appartment);
 
             modelBuilder.Entity<Measurement>()
                 .HasRequired(m => m.Sensor);

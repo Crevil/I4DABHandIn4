@@ -54,7 +54,7 @@
   <ItemGroup>
     <Compile Include="Context.cs" />
     <Compile Include="JSONDeserialisator.cs" />
-    <Compile Include="Entities\Location.cs" />
+    <Compile Include="Entities\Appartment.cs" />
     <Compile Include="Entities\Measurement.cs" />
     <Compile Include="Entities\Sensor.cs" />
     <Compile Include="Migrations\201504232135380_AddedModelBuilder.cs" />

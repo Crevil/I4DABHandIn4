@@ -54,31 +54,32 @@ namespace DAL
 
         public class Measurement
         {
-            public double value { get; set; }
-            public string timestamp { get; set; }
+            public double Value { get; set; }
+            public string Timestamp { get; set; }
 
-            public int sensorId { get; set; }
-
-            public int appartmentId { get; set; }
+            public Sensor Sensor { get; set; }
+            public int SensorId { get; set; }
+            public Appartment Appartment { get; set; }
+            public int AppartmentId { get; set; }
         }
 
         public class Appartment
         {
-            public int appartmentId { get; set; }
+            public int AppartmentId { get; set; }
             public int Floor { get; set; }
-            public int No { get; set; }
+            public int Number { get; set; }
             public double Size { get; set; }
         }
 
         public class Sensor
         {
-            public int sensorId { get; set; }
-            public string calibrationCoeff { get; set; }
-            public string description { get; set; }
-            public string calibrationDate { get; set; }
-            public string externalRef { get; set; }
-            public string unit { get; set; }
-            public string calibrationEquation { get; set; }
+            public int SensorId { get; set; }
+            public string CalibrationCoeff { get; set; }
+            public string Description { get; set; }
+            public string CalibrationDate { get; set; }
+            public string ExternalRef { get; set; }
+            public string Unit { get; set; }
+            public string CalibrationEquation { get; set; }
         }
     }
 }
