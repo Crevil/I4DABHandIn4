@@ -30,18 +30,18 @@ namespace TestOfDal
             int max = 11803;
 
             // HENTER ALLE 11803 json filer fra nettet hvis den får lov at løbe :D
-            for (int i = 1; i < max; i++)
+            for (int i = 1; i < max-11800; i++)
             {
                 List<Measurement> test = ser.DeserialiseMeasurement(StringDownloader.DownloadStringFromURL(begin + i.ToString() + end));
                 // DO SOMETHING WITH LIST
-                test = null;
+                Console.WriteLine(i);
             }
 
             
 
-            
+            string originalUrl = "http://userportal.iha.dk/~jrt/i4dab/E14/HandIn4/GFKSC002_original.txt";
 
-            Tuple<List<Appartment>, List<Sensor>> t = ser.DeserialiseOriginalFile("../GFKSC002_original.txt");
+            Tuple<List<Appartment>, List<Sensor>> t = ser.DeserialiseOriginalFile(StringDownloader.DownloadStringFromURL(originalUrl));
             while (true)
             {
                 
