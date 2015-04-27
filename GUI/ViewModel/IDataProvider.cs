@@ -5,7 +5,7 @@ namespace GUI.ViewModel
 {
     public interface IDataProvider
     {
-        List<Measurement> GetData();
-        List<Measurement> GetUpdateData(DateTime date);
+        List<DAL.Entities.Measurement> GetData();
+        List<DAL.Entities.Measurement> GetUpdateData(DateTime date);
     }
 }

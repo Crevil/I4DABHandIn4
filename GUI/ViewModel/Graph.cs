@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using DAL;
+using DAL.Entities;
 using GUI.Annotations;
 using OxyPlot;
 using OxyPlot.Axes;
@@ -15,7 +16,7 @@ namespace GUI.ViewModel
     {
         private PlotModel _plotModel;
         private DateTime _lastUpdate = DateTime.Now;
-        private IDataProvider _data;
+        private readonly IDataProvider _data;
 
         public PlotModel PlotModel
         {
@@ -30,7 +31,7 @@ namespace GUI.ViewModel
         public Graph()
         {
             PlotModel = new PlotModel();
-            _data = new DummyGraphData();
+            _data = new DataProvider();
 
             SetUpModel();
             LoadData();
@@ -58,16 +59,30 @@ namespace GUI.ViewModel
 
         private void SetUpModel()
         {
-            PlotModel.LegendTitle = "Legend";
             PlotModel.LegendOrientation = LegendOrientation.Horizontal;
             PlotModel.LegendPlacement = LegendPlacement.Outside;
             PlotModel.LegendPosition = LegendPosition.TopRight;
             PlotModel.LegendBackground = OxyColor.FromAColor(200, OxyColors.White);
             PlotModel.LegendBorder = OxyColors.Black;
 
-            var dateAxis = new DateTimeAxis(AxisPosition.Bottom, "Date", "HH:mm") { MajorGridlineStyle = LineStyle.Solid, MinorGridlineStyle = LineStyle.Dot, IntervalLength = 80 };
+            var dateAxis = new DateTimeAxis()
+            {
+                Position = AxisPosition.Bottom,
+                Title = "Date",
+                MajorGridlineStyle = LineStyle.Solid,
+                MinorGridlineStyle = LineStyle.Dot,
+                IntervalLength = 80
+            };
             PlotModel.Axes.Add(dateAxis);
-            var valueAxis = new LinearAxis(AxisPosition.Left, 0) { MajorGridlineStyle = LineStyle.Solid, MinorGridlineStyle = LineStyle.Dot, Title = "Value" };
+
+            var valueAxis = new LinearAxis()
+            {
+                Position = AxisPosition.Left,
+                Minimum = 0,
+                MajorGridlineStyle = LineStyle.Solid, 
+                MinorGridlineStyle = LineStyle.Dot, 
+                Title = "Value"
+            };
             PlotModel.Axes.Add(valueAxis);
 
         }
@@ -76,7 +91,7 @@ namespace GUI.ViewModel
         {
             var measurements = _data.GetData();
 
-            var dataPerDetector = measurements.GroupBy(m => m.DetectorId).OrderBy(m => m.Key).ToList();
+            var dataPerDetector = measurements.GroupBy(m => m.SensorId).OrderBy(m => m.Key).ToList();
 
             foreach (var data in dataPerDetector)
             {
@@ -87,28 +102,48 @@ namespace GUI.ViewModel
                     MarkerStroke = _colors[data.Key],
                     MarkerType = _markerTypes[data.Key],
                     CanTrackerInterpolatePoints = false,
-                    Title = string.Format("Detector {0}", data.Key),
+                    Title = string.Format("Sensor {0}", data.Key),
                     Smooth = false,
                 };
 
-                data.ToList().ForEach(d => lineSerie.Points.Add(new DataPoint(DateTimeAxis.ToDouble(d.DateTime), d.Value)));
+                AddMeasurementPoint(data, lineSerie);
+
                 PlotModel.Series.Add(lineSerie);
             }
             _lastUpdate = DateTime.Now;
         }
 
+        private void AddMeasurementPoint(IEnumerable<Measurement> data, [NotNull] LineSeries lineSerie)
+        {
+            if (lineSerie == null) throw new ArgumentNullException("lineSerie");
+
+            data.ToList().ForEach(
+                    d =>
+                        lineSerie.Points.Add
+                        (
+                            new DataPoint(
+                                Axis.ToDouble(
+                                    DataProvider.ConvertFromUnixTimestamp(
+                                        double.Parse(d.Timestamp, CultureInfo.CurrentCulture)
+                                    )
+                                ),
+                                d.Value
+                            )
+                        )
+                   );
+        }
+
         public void UpdateModel()
         {
             var measurements = _data.GetUpdateData(_lastUpdate);
-            var dataPerDetector = measurements.GroupBy(m => m.DetectorId).OrderBy(m => m.Key).ToList();
+            var dataPerDetector = measurements.GroupBy(m => m.SensorId).OrderBy(m => m.Key).ToList();
 
             foreach (var data in dataPerDetector)
             {
-                var lineSerie = PlotModel.Series[data.Key - 1] as LineSeries;
+                var lineSerie = PlotModel.Series[data.Key] as LineSeries;
                 if (lineSerie != null)
                 {
-                    data.ToList()
-                        .ForEach(d => lineSerie.Points.Add(new DataPoint(DateTimeAxis.ToDouble(d.DateTime), d.Value)));
+                    AddMeasurementPoint(data, lineSerie);
                 }
             }
             _lastUpdate = DateTime.Now;

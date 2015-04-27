@@ -62,7 +62,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ViewModel\GraphData.cs" />
+    <Compile Include="ViewModel\DataProvider.cs" />
+    <Compile Include="ViewModel\DummyGraphData.cs" />
+    <Compile Include="ViewModel\DummyMeasurement.cs" />
     <Compile Include="ViewModel\IDataProvider.cs" />
     <Compile Include="ViewModel\MainWindowModel.cs" />
     <Page Include="MainWindow.xaml">
