@@ -11,3 +11,5 @@ Stored procedures
 Triggers to all manipulating operations
 
 View to db
+
+Setup-class: Must initialize database from JSON etc.
