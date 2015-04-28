@@ -20,24 +20,22 @@ namespace GUI
             DataContext = _viewModel;
 
             CompositionTarget.Rendering += CompositionTargetRendering;
-            stopwatch.Start();
+            _stopwatch.Start();
 
             InitializeComponent();
 
         }
 
-        private long frameCounter;
-        private Stopwatch stopwatch = new Stopwatch();
-        private long lastUpdateMilliSeconds;
+        private readonly Stopwatch _stopwatch = new Stopwatch();
+        private long _lastUpdateMilliSeconds;
 
         private void CompositionTargetRendering(object sender, EventArgs e)
         {
-            if (stopwatch.ElapsedMilliseconds > lastUpdateMilliSeconds + 5000)
-            {
-                _viewModel.Graph.UpdateModel();
-                GraphPlot.InvalidatePlot(true);
-                lastUpdateMilliSeconds = stopwatch.ElapsedMilliseconds;
-            }
+            if (_stopwatch.ElapsedMilliseconds <= _lastUpdateMilliSeconds + 5000) return;
+
+            _viewModel.Graph.UpdateModel();
+            GraphPlot.InvalidatePlot();
+            _lastUpdateMilliSeconds = _stopwatch.ElapsedMilliseconds;
         }
     }
 }
