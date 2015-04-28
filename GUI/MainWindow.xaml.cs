@@ -34,6 +34,7 @@ namespace GUI
             if (_stopwatch.ElapsedMilliseconds <= _lastUpdateMilliSeconds + 5000) return;
 
             _viewModel.Graph.UpdateModel();
+
             GraphPlot.InvalidatePlot();
             _lastUpdateMilliSeconds = _stopwatch.ElapsedMilliseconds;
         }

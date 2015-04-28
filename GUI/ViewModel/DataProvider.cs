@@ -6,17 +6,17 @@ namespace GUI.ViewModel
 {
     public class DataProvider : IDataProvider
     {
-        public List<DAL.Entities.Measurement> GetData()
+        public List<Measurement> GetData()
         {
             var r = new Random();
 
-            var list = new List<DAL.Entities.Measurement>();
+            var list = new List<Measurement>();
             for (var i = 0; i < 2; i++)
             {
                 for (var j = 4; j >= 0; j--)
                 {
 
-                    list.Add(new DAL.Entities.Measurement()
+                    list.Add(new Measurement()
                     {
                         Timestamp =
                             ConvertToUnixTimestamp(DateTime.Now.AddSeconds(j * -5)).ToString(CultureInfo.CurrentCulture),
@@ -29,14 +29,14 @@ namespace GUI.ViewModel
 
         }
 
-        public List<DAL.Entities.Measurement> GetUpdateData(DateTime date)
+        public List<Measurement> GetUpdateData(DateTime date)
         {
             var r = new Random();
 
-            var list = new List<DAL.Entities.Measurement>();
+            var list = new List<Measurement>();
             for (var i = 0; i < 2; i++)
             {
-                    list.Add(new DAL.Entities.Measurement()
+                    list.Add(new Measurement()
                     {
                         Timestamp =
                             ConvertToUnixTimestamp(DateTime.Now).ToString(CultureInfo.CurrentCulture),
