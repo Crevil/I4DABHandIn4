@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using DAL.Entities;
 using GUI.Annotations;
@@ -34,6 +35,7 @@ namespace GUI.ViewModel
         #endregion // Sensor lists
 
         public Graph.Graph Graph { get; set; }
+        public event EventHandler GraphDataChanged;
 
         private IDataProvider _dataProvider;
 
@@ -42,8 +44,8 @@ namespace GUI.ViewModel
             Appartments = new Appartments();
             Sensors = new Sensors();
 
-            _dataProvider = new DataProvider();
-            Graph = new Graph.Graph(_dataProvider);
+            //_dataProvider = new AppartmentTemperatureDataProvider(_selectedAppartments);
+            //Graph = new Graph.Graph(_dataProvider);
 
             #region Setup selection event handlers
             _selectedSensors.CollectionChanged += (sender, e) =>
@@ -58,6 +60,15 @@ namespace GUI.ViewModel
                 AppartmentSelectionChanged(SelectedAppartments, new SelectionChangedArgs { Sensors = SelectedSensors, Appartments = SelectedAppartments });
             };
             #endregion //  Setup selection event handlers
+
+            _selectedAppartments.CollectionChanged += (sender, e) =>
+            {
+                _dataProvider = new AppartmentTemperatureDataProvider(_selectedAppartments);
+                Graph = new Graph.Graph(_dataProvider);
+                Graph.PlotModel.InvalidatePlot(true);
+                if(PropertyChanged != null) PropertyChanged(sender, new PropertyChangedEventArgs("Graph"));
+                if (GraphDataChanged != null) GraphDataChanged(sender, e);
+            };
         }
 
         #region PropertyChanged

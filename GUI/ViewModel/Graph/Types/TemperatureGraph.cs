@@ -13,7 +13,6 @@ namespace GUI.ViewModel.Graph.Types
     public class TemperatureGraph : IGraphType
     {
         private PlotModel _plotModel; 
-        private DateTime _lastUpdate = DateTime.Now;
         public IDataProvider DataProvider { get; set; }
 
         public PlotModel PlotModel
@@ -70,7 +69,7 @@ namespace GUI.ViewModel.Graph.Types
                     MarkerStroke = Graph.Colors[data.Key],
                     MarkerType = Graph.MarkerTypes[data.Key],
                     CanTrackerInterpolatePoints = false,
-                    Title = string.Format("Sensor {0}", data.Key),
+                    Title = string.Format("Appartment {0}", data.Key),
                     Smooth = false
                 };
 
@@ -78,10 +77,9 @@ namespace GUI.ViewModel.Graph.Types
 
                 _plotModel.Series.Add(lineSerie);
             }
-            _lastUpdate = DateTime.Now;
         }
 
-        private void AddMeasurementPoint(IEnumerable<Measurement> data, [NotNull] LineSeries lineSerie)
+        private void AddMeasurementPoint(IEnumerable<Measurement> data, [NotNull] DataPointSeries lineSerie)
         {
             if (lineSerie == null) throw new ArgumentNullException("lineSerie");
 
@@ -91,7 +89,7 @@ namespace GUI.ViewModel.Graph.Types
                         (
                             new DataPoint(
                                 Axis.ToDouble(
-                                    ViewModel.DataProvider.ConvertFromUnixTimestamp(
+                                    AppartmentTemperatureDataProvider.ConvertFromUnixTimestamp(
                                         double.Parse(d.Timestamp, CultureInfo.CurrentCulture)
                                         )
                                     ),
@@ -102,7 +100,9 @@ namespace GUI.ViewModel.Graph.Types
         }
         public void UpdateModel()
         {
-            var measurements = DataProvider.GetUpdateData(_lastUpdate);
+            if (_plotModel.Series.Count == 0) return;
+
+            var measurements = DataProvider.GetUpdateData(DateTime.Now);
             var dataPerDetector = measurements.GroupBy(m => m.SensorId).OrderBy(m => m.Key).ToList();
 
             foreach (var data in dataPerDetector)
@@ -113,7 +113,6 @@ namespace GUI.ViewModel.Graph.Types
                     AddMeasurementPoint(data, lineSerie);
                 }
             }
-            _lastUpdate = DateTime.Now;
         }
     }
 }

@@ -11,6 +11,7 @@ namespace GUI.ViewModel.Graph
     {
         private PlotModel _plotModel;
         private readonly IGraphType _type;
+        private IDataProvider _dataProvider;
 
         public PlotModel PlotModel
         {
@@ -18,8 +19,16 @@ namespace GUI.ViewModel.Graph
             set { _plotModel = value; OnPropertyChanged(); }
         }
 
+        public IDataProvider DataProvider
+        {
+            get { return _dataProvider; }
+            set { _dataProvider = value; OnPropertyChanged(); }
+        }
+
         public Graph(IDataProvider dataProvider)
         {
+            _dataProvider = dataProvider;
+
             PlotModel = new PlotModel();
             _type = new TemperatureGraph {PlotModel = PlotModel, DataProvider = dataProvider};
             _type.SetUpModel();

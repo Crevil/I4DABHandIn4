@@ -62,7 +62,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ViewModel\DataProvider.cs" />
+    <Compile Include="ViewModel\AppartmentTemperatureDataProvider.cs" />
     <Compile Include="ViewModel\DummyGraphData.cs" />
     <Compile Include="ViewModel\DummyMeasurement.cs" />
     <Compile Include="ViewModel\Graph\IGraphType.cs" />

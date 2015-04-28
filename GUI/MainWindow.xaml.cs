@@ -15,15 +15,22 @@ namespace GUI
 
         public MainWindow()
         {
-
-            _viewModel = new MainWindowModel();
-            DataContext = _viewModel;
-
             CompositionTarget.Rendering += CompositionTargetRendering;
             _stopwatch.Start();
 
             InitializeComponent();
 
+            AppartmentListBox.SelectedIndex = 0;
+            _viewModel = new MainWindowModel();
+            DataContext = _viewModel;
+            _viewModel.GraphDataChanged += RedrawPlot;
+
+        }
+
+        private void RedrawPlot(object sender, EventArgs eventArgs)
+        {
+            if (GraphPlot == null) return;
+            GraphPlot.InvalidatePlot();
         }
 
         private readonly Stopwatch _stopwatch = new Stopwatch();

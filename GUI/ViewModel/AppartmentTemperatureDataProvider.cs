@@ -1,26 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using DAL.Entities;
 namespace GUI.ViewModel
 {
-    public class DataProvider : IDataProvider
+    public class AppartmentTemperatureDataProvider : IDataProvider
     {
+        private ObservableCollection<Appartment> _appartments;
+
+        public AppartmentTemperatureDataProvider(ObservableCollection<Appartment> appartments)
+        {
+            _appartments = appartments;
+        }
+
         public List<Measurement> GetData()
         {
             var r = new Random();
 
             var list = new List<Measurement>();
-            for (var i = 0; i < 2; i++)
+            for (var i = 0; i < _appartments.Count; i++)
             {
                 for (var j = 4; j >= 0; j--)
                 {
 
-                    list.Add(new Measurement()
+                    list.Add(new Measurement
                     {
                         Timestamp =
                             ConvertToUnixTimestamp(DateTime.Now.AddSeconds(j * -5)).ToString(CultureInfo.CurrentCulture),
-                        Value = r.Next(0, 10),
+                        Value = 22,
                         SensorId = i
                     });
                 }
@@ -34,7 +42,7 @@ namespace GUI.ViewModel
             var r = new Random();
 
             var list = new List<Measurement>();
-            for (var i = 0; i < 2; i++)
+            for (var i = 0; i < _appartments.Count; i++)
             {
                     list.Add(new Measurement()
                     {
