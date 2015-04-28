@@ -15,7 +15,7 @@ namespace DAL
             
         }
 
-        public DbSet<Appartment> Locations { get; set; }
+        public DbSet<Appartment> Appartments { get; set; }
         public DbSet<Sensor> Sensors { get; set; }
         public DbSet<Measurement> Measurements { get; set; }
 

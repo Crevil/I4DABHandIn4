@@ -14,5 +14,19 @@
         {
             
         }
+
+        public Measurement(double value, string timestamp)
+        {
+            Value = value;
+            Timestamp = timestamp;
+        }
+
+        public Measurement(double value, string timestamp, Sensor sensor, Appartment appartment)
+        {
+            Value = value;
+            Timestamp = timestamp;
+            Sensor = sensor;
+            Appartment = appartment;
+        }
     }
 }

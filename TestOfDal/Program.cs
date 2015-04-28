@@ -13,16 +13,23 @@ namespace TestOfDal
 {
     class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-            //using (var db = new Context())
-            //{
-            //    var test = new Location(1,1,1);
-            //    db.Locations.Add(test);
-            //    db.SaveChanges();
-            //}
+            var context = new Context();
+            var appRepos = new Repository<Appartment>(context);
+            var sensorRepos = new Repository<Sensor>(context);
+            var measureRepos = new Repository<Measurement>(context);
 
-            JSONDeserialisator ser = new JSONDeserialisator();
+            var apptest = new Appartment(1, 1, 1);
+            var sensortest = new Sensor { Description = "John"};
+            var testMeasurement = new Measurement(1,"timestamp",sensortest,apptest);
+
+            appRepos.Add(apptest).Wait();
+            sensorRepos.Add(sensortest).Wait();
+            measureRepos.Add(testMeasurement).Wait();
+
+            var read = appRepos.FindWithInclude(a => a.AppartmentId == 13, m => m.Measurements).Result;
+            /*JSONDeserialisator ser = new JSONDeserialisator();
 
             string begin = "http://userportal.iha.dk/~jrt/i4dab/E14/HandIn4/dataGDL/data/";
             string end = ".json";
@@ -45,7 +52,7 @@ namespace TestOfDal
             while (true)
             {
                 
-            }
+            }*/
         }
     }
 }
