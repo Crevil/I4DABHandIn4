@@ -17,7 +17,7 @@ namespace TestOfDal
         private static void Main(string[] args)
         {
             var db = new DbRepository();
-            var read = db.AppartmentWithMeasurements(db.Appartments.);
+            var read = db.AppartmentWithMeasurements();
 
             /*JSONDeserialisator ser = new JSONDeserialisator();
 

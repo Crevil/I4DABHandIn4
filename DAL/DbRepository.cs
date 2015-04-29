@@ -31,24 +31,22 @@ namespace DAL
             return _appartmentRepos.FindWithInclude(m => m.Measurements.Select(s => s.Sensor), a => a.AppartmentId == id).Result;
         }
 
-        public void AddCollectionOfAppartments(ICollection<Appartment> appartments)
+        public async Task AddCollectionOfAppartments(ICollection<Appartment> appartments)
         {
-            _appartmentRepos.AddCollection(appartments).Wait();
-            Appartments = appartments;
+            await _appartmentRepos.AddCollection(appartments);
+            Appartments = _appartmentRepos.GetAll().Result;
         }
 
-        public void AddCollectionOfSensors(ICollection<Sensor> sensors)
+        public async Task AddCollectionOfSensors(ICollection<Sensor> sensors)
         {
-            _sensorRepos.AddCollection(sensors).Wait();
-            Sensors = sensors;
+            await _sensorRepos.AddCollection(sensors);
+            Sensors = _sensorRepos.GetAll().Result;
         }
 
-        public void AddCollectionOfMeasurements(ICollection<Measurement> measurements)
+        public async Task AddCollectionOfMeasurements(ICollection<Measurement> measurements)
         {
-            _measureRepos.AddCollection(measurements).Wait();
-            Measurements = measurements;
+            await _measureRepos.AddCollection(measurements);
+            Measurements = _measureRepos.GetAll().Result;
         }
-
-
     }
 }
