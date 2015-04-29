@@ -3,6 +3,8 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows;
+using System.Windows.Controls;
 using DAL.Entities;
 using GUI.Annotations;
 using GUI.ViewModel.MultiSelection;
@@ -37,6 +39,7 @@ namespace GUI.ViewModel
 
         #region Plot handling
         public Graph.Graph Graph { get; set; }
+        public Commands Commands { get; set; }
 
         private PlotView _plot;
         public PlotView Plot
@@ -75,6 +78,7 @@ namespace GUI.ViewModel
             Sensors = new Sensors();
             Plot = new PlotView();
 
+            Commands = new Commands();
             #region Setup selection event handlers
             _selectedSensors.CollectionChanged += (sender, e) =>
             {
@@ -91,6 +95,7 @@ namespace GUI.ViewModel
 
             _selectedAppartments.CollectionChanged += (sender, e) => AppartmentsSelectionChanged();
         }
+
 
         #region PropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;

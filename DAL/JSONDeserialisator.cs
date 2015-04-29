@@ -14,10 +14,10 @@ using Newtonsoft.Json.Linq;
 
 namespace DAL
 {
-    public class JSONDeserialisator
+    public static class JSONDeserialisator
     {
 
-        public Tuple<List<Appartment>, List<Sensor>> DeserialiseOriginalFile(string json)
+        public static Tuple<List<Appartment>, List<Sensor>> DeserialiseOriginalFile(string json)
         {
             int appartmentBegin = json.IndexOf("[", 0);
             int appartmentEnd = json.IndexOf("]", appartmentBegin);
@@ -34,7 +34,7 @@ namespace DAL
 
         }
 
-        public List<Measurement> DeserialiseMeasurement(string json)
+        public static List<Measurement> DeserialiseMeasurement(string json)
         {
             int begin = json.IndexOf("[", 0);
             int end = json.IndexOf("]", begin);
