@@ -54,7 +54,7 @@ namespace GUI.ViewModel
             };
 
 
-            _selectedAppartments.CollectionChanged += (sender, e) => AppartmentsSelectionChanged();
+            _selectedAppartments.CollectionChanged += (sender, e) => SelectionChanged();
             #endregion //  Setup selection event handlers
         }
 
@@ -72,12 +72,18 @@ namespace GUI.ViewModel
         #region Sensor handling
         public ObservableCollection<string> SensorTypes { get; private set; }
         public ObservableCollection<Sensor> Sensors { get; private set; }
-        
-        private Sensor _selectedSensor;
+
+        private Sensor _sensor;
+
         public Sensor SelectedSensor
         {
-            get { return _selectedSensor; }
-            set { _selectedSensor = value; }
+            get { return _sensor; }
+            set
+            {
+                if (_sensor == value) return;
+                _sensor = value;
+                SelectionChanged(); 
+            }
         }
 
         #endregion // Sensor lists
@@ -97,16 +103,14 @@ namespace GUI.ViewModel
             }
         }
 
-        private void AppartmentsSelectionChanged()
+        private void SelectionChanged()
         {
             // If nothing is selected, clear plot model
-            if (_selectedAppartments.Count <= 0 && Graph != null)
-            {
-                Graph.PlotView.Model = null;
+            if ((SelectedAppartments.Count <= 0 || SelectedSensor == null) && Graph != null )
                 return;
-            }
+            
             var g = new GDL();
-            Graph = new Graph.Graph(g.GetMeasurements(_selectedAppartments, _selectedSensor));
+            Graph = new Graph.Graph(g.GetMeasurements(SelectedAppartments, SelectedSensor));
 
         }
 

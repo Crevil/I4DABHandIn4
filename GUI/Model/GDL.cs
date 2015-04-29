@@ -34,9 +34,18 @@ namespace GUI.Model
             return null;
         }
 
-
+        /// <summary>
+        /// Returns a list of measurements associated with appartments and sensor
+        /// </summary>
+        /// <param name="appartments">Collection of appartments to search from</param>
+        /// <param name="sensor">Sensor to search from</param>
+        /// <returns></returns>
          public ICollection<Measurement> GetMeasurements(ICollection<Appartment> appartments, Sensor sensor )
          {
+             // Get measurements from db for appartments and sensor
+
+             // Dummy
+             // Create random measurements for appartments
              var r = new Random();
 
              var list = new List<Measurement>();
@@ -52,7 +61,7 @@ namespace GUI.Model
                              Timestamp =
                                  TimeHelpers.ConvertToUnixTimestamp(DateTime.Now.AddSeconds(j * -5)).ToString(CultureInfo.CurrentCulture),
                              Value = r.Next(0, 20),
-                             SensorId = i,
+                             SensorId = sensor.SensorId,
                              AppartmentId = appartments.ElementAt(i).AppartmentId
                          });
                  }

@@ -24,9 +24,13 @@ namespace GUI.ViewModel.Graph
         public Graph(ICollection<Measurement> measurements)
         {
             _measurements = measurements;
-            PlotView = new PlotView();
-            PlotView.Model = new PlotModel();
-            _type = new TemperatureGraph {PlotModel = PlotView.Model, Measurements = _measurements};
+            PlotView = new PlotView {Model = new PlotModel()};
+
+            _type = new TemperatureGraph
+            {
+                PlotModel = PlotView.Model, 
+                Measurements = _measurements
+            };
             _type.SetUpModel();
             _type.LoadData();
 

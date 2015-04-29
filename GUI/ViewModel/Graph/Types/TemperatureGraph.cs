@@ -13,18 +13,9 @@ namespace GUI.ViewModel.Graph.Types
 {
     public class TemperatureGraph : IGraphType
     {
-        private PlotModel _plotModel;
         public ICollection<Measurement> Measurements { get; set; }
 
-        public PlotModel PlotModel
-        {
-            get { return _plotModel; }
-            set { _plotModel = value; }
-        }
-
-        public TemperatureGraph()
-        {
-        }
+        public PlotModel PlotModel { get; set; }
 
         public void SetUpModel()
         {
@@ -44,10 +35,10 @@ namespace GUI.ViewModel.Graph.Types
             };
             PlotModel.Axes.Add(dateAxis);
 
+
             var valueAxisLeft = new LinearAxis()
             {
                 Position = AxisPosition.Left,
-                Minimum = 0,
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dot,
                 Title = "Temperature"
@@ -58,48 +49,50 @@ namespace GUI.ViewModel.Graph.Types
         public void LoadData()
         {
             var dataPerDetector = SelectMeasurements(Measurements);
-
+            PlotModel.Series.Clear();
             foreach (var data in dataPerDetector)
             {
-                var lineSerie = new LineSeries
+                var line = new LineSeries
                 {
                     StrokeThickness = 2,
                     MarkerSize = 3,
-                    MarkerStroke = Graph.Colors[data.Key],
-                    MarkerType = Graph.MarkerTypes[data.Key],
+                    MarkerStroke = Graph.Colors[data.Key % Graph.Colors.Count],
+                    MarkerType = Graph.MarkerTypes[data.Key % Graph.MarkerTypes.Count],
                     CanTrackerInterpolatePoints = false,
                     Title = string.Format("Appartment {0}", data.First().AppartmentId),
                     Smooth = false
                 };
 
-                AddMeasurementPoint(data, lineSerie);
+                AddMeasurementPoint(data, line);
 
-                _plotModel.Series.Add(lineSerie);
+                PlotModel.Series.Add(line);
             }
         }
 
         public void UpdateModel()
         {
-            if (_plotModel.Series.Count == 0) return;
+            LoadData(); // Dummy
+            // Needs work! 
+            //if (PlotModel.Series.Count == 0) return;
 
-            var dataPerDetector = SelectMeasurements(Measurements);
+            //var dataPerDetector = SelectMeasurements(Measurements);
 
-            foreach (var data in dataPerDetector)
-            {
-                var lineSerie = _plotModel.Series[data.Key] as LineSeries;
-                if (lineSerie != null)
-                {
-                    AddMeasurementPoint(data, lineSerie);
-                }
-            }
+            //foreach (var data in dataPerDetector)
+            //{
+            //    var lineSerie = PlotModel.Series[data.Key] as LineSeries;
+            //    if (lineSerie != null)
+            //    {
+            //        AddMeasurementPoint(data, lineSerie);
+            //    }
+            //}
         }
 
-        private IEnumerable<IGrouping<int, Measurement>> SelectMeasurements(ICollection<Measurement> measurements)
+        private static IEnumerable<IGrouping<int, Measurement>> SelectMeasurements(ICollection<Measurement> measurements)
         {
-            return measurements.GroupBy(m => m.SensorId).OrderBy(m => m.Key).ToList();
+            return measurements.GroupBy(m => m.AppartmentId).OrderBy(m => m.Key).ToList();
         }
 
-        private void AddMeasurementPoint(IEnumerable<Measurement> data, [NotNull] DataPointSeries lineSerie)
+        public void AddMeasurementPoint(IEnumerable<Measurement> data, [NotNull] DataPointSeries lineSerie)
         {
             if (lineSerie == null) throw new ArgumentNullException("lineSerie");
 
