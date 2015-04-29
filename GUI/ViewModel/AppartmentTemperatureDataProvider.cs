@@ -29,7 +29,8 @@ namespace GUI.ViewModel
                         Timestamp =
                             ConvertToUnixTimestamp(DateTime.Now.AddSeconds(j * -5)).ToString(CultureInfo.CurrentCulture),
                         Value = 22,
-                        SensorId = i
+                        SensorId = i, 
+                        AppartmentId = r.Next(0, 3)
                     });
                 }
             }
@@ -49,7 +50,8 @@ namespace GUI.ViewModel
                         Timestamp =
                             ConvertToUnixTimestamp(DateTime.Now).ToString(CultureInfo.CurrentCulture),
                         Value = r.Next(0, 10),
-                        SensorId = i
+                        SensorId = i, 
+                        AppartmentId = r.Next(0, 3)
                     });
             }
             return list;

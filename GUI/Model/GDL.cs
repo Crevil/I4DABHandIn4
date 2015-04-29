@@ -8,7 +8,7 @@ using DAL.Entities;
 
 namespace GUI.Model
 {
-     static public class GDL
+    public class GDL
     {
         private static int _jsonCounter = 0;
 
@@ -32,5 +32,11 @@ namespace GUI.Model
             // do something to the DB
             return null;
         }
+
+
+         public ICollection<Measurement> GetMeasurements(ICollection<Appartment> appartments, Sensor sensor )
+         {
+             return null;
+         }
     }
 }

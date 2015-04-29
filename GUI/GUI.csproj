@@ -76,7 +76,6 @@
     <Compile Include="ViewModel\MultiSelection\MultiSelectorBehaviours.cs" />
     <Compile Include="ViewModel\MultiSelection\SelectionChangedArgs.cs" />
     <Compile Include="ViewModel\MultiSelection\TwoListSynchronizer.cs" />
-    <Compile Include="ViewModel\Sensors.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -93,7 +92,6 @@
   <ItemGroup>
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ViewModel\Graph\Graph.cs" />
-    <Compile Include="ViewModel\Appartments.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

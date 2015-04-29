@@ -58,7 +58,7 @@ namespace GUI.ViewModel.Graph.Types
         {
             var measurements = DataProvider.GetData();
 
-            var dataPerDetector = measurements.GroupBy(m => m.SensorId).OrderBy(m => m.Key).ToList();
+            var dataPerDetector = SelectMeasurements(measurements);
 
             foreach (var data in dataPerDetector)
             {
@@ -69,7 +69,7 @@ namespace GUI.ViewModel.Graph.Types
                     MarkerStroke = Graph.Colors[data.Key],
                     MarkerType = Graph.MarkerTypes[data.Key],
                     CanTrackerInterpolatePoints = false,
-                    Title = string.Format("Appartment {0}", data.Key),
+                    Title = string.Format("Appartment {0}", data.First().AppartmentId),
                     Smooth = false
                 };
 
@@ -77,6 +77,28 @@ namespace GUI.ViewModel.Graph.Types
 
                 _plotModel.Series.Add(lineSerie);
             }
+        }
+
+        public void UpdateModel()
+        {
+            if (_plotModel.Series.Count == 0) return;
+
+            var measurements = DataProvider.GetUpdateData(DateTime.Now);
+            var dataPerDetector = SelectMeasurements(measurements);
+
+            foreach (var data in dataPerDetector)
+            {
+                var lineSerie = _plotModel.Series[data.Key] as LineSeries;
+                if (lineSerie != null)
+                {
+                    AddMeasurementPoint(data, lineSerie);
+                }
+            }
+        }
+
+        private IEnumerable<IGrouping<int, Measurement>> SelectMeasurements(List<Measurement> measurements)
+        {
+            return measurements.GroupBy(m => m.SensorId).OrderBy(m => m.Key).ToList();
         }
 
         private void AddMeasurementPoint(IEnumerable<Measurement> data, [NotNull] DataPointSeries lineSerie)
@@ -97,22 +119,6 @@ namespace GUI.ViewModel.Graph.Types
                                 )
                         )
                 );
-        }
-        public void UpdateModel()
-        {
-            if (_plotModel.Series.Count == 0) return;
-
-            var measurements = DataProvider.GetUpdateData(DateTime.Now);
-            var dataPerDetector = measurements.GroupBy(m => m.SensorId).OrderBy(m => m.Key).ToList();
-
-            foreach (var data in dataPerDetector)
-            {
-                var lineSerie = _plotModel.Series[data.Key] as LineSeries;
-                if (lineSerie != null)
-                {
-                    AddMeasurementPoint(data, lineSerie);
-                }
-            }
         }
     }
 }

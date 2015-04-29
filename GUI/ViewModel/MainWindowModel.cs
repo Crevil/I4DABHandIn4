@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using DAL;
 using DAL.Entities;
 using GUI.Annotations;
 using GUI.ViewModel.MultiSelection;
@@ -16,20 +17,33 @@ namespace GUI.ViewModel
     {
         public MainWindowModel()
         {
-            Appartments = new Appartments();    // List of appartments on GUI
-            Sensors = new Sensors();
-            SensorTypes = new ObservableCollection<string>();
+            //var db = new DbRepository();
+            //Appartments = new ObservableCollection<Appartment>(db.Appartments);
+
+            Appartments = new ObservableCollection<Appartment> // List of appartments on GUI
+            {
+                new Appartment {AppartmentId = 1},
+                new Appartment {AppartmentId = 2},
+                new Appartment {AppartmentId = 3}
+            };
+
+            Sensors = new ObservableCollection<Sensor> // List of sensors on GUI
+            {
+                new Sensor {Description = "Sensor Test1"},
+                new Sensor {Description = "Sensor Test1"},
+                new Sensor {Description = "Sensor Test2"},
+                new Sensor {Description = "Sensor Test3"}
+            };
+
+            Commands = new Commands();
             Plot = new PlotView();
+
+            SensorTypes = new ObservableCollection<string>();
 
             foreach (var s in Sensors.GroupBy(g => g.Description))// List of sensortypes on GUI
             {
                 SensorTypes.Add(s.Key);
             }
-
-
-            Commands = new Commands();
-            
-            
 
             #region Setup selection event handlers
             _selectedSensors.CollectionChanged += (sender, e) =>
@@ -43,16 +57,14 @@ namespace GUI.ViewModel
                 if (AppartmentSelectionChanged == null) return;
                 AppartmentSelectionChanged(SelectedAppartments, new SelectionChangedArgs { Sensors = SelectedSensors, Appartments = SelectedAppartments });
             };
-            #endregion //  Setup selection event handlers
+
 
             _selectedAppartments.CollectionChanged += (sender, e) => AppartmentsSelectionChanged();
+            #endregion //  Setup selection event handlers
         }
 
-        
-
-
         #region Appartment handling
-        public Appartments Appartments { get; private set; }
+        public ObservableCollection<Appartment> Appartments { get; private set; }
         private readonly ObservableCollection<Appartment> _selectedAppartments = new ObservableCollection<Appartment>();
         public ObservableCollection<Appartment> SelectedAppartments
         {
@@ -64,7 +76,7 @@ namespace GUI.ViewModel
 
         #region Sensor handling
         public ObservableCollection<string> SensorTypes { get; private set; }
-        public Sensors Sensors { get; private set; }
+        public ObservableCollection<Sensor> Sensors { get; private set; }
         private readonly ObservableCollection<Sensor> _selectedSensors = new ObservableCollection<Sensor>();
         public ObservableCollection<Sensor> SelectedSensors
         {
@@ -73,18 +85,18 @@ namespace GUI.ViewModel
 
         public event EventHandler SensorSelectionChanged;
         #endregion // Sensor lists
+        public Commands Commands { get; set; }
 
         #region Plot handling
         public Graph.Graph Graph { get; set; }
-        public Commands Commands { get; set; }
-
         private PlotView _plot;
+        private IDataProvider _dataProvider;
         public PlotView Plot
         {
             get { return _plot; }
             set
             {
-                if (_plot == value) return;
+                if (Equals(_plot, value)) return;
                 _plot = value;
                 OnPropertyChanged();
             }
@@ -92,6 +104,7 @@ namespace GUI.ViewModel
 
         private void AppartmentsSelectionChanged()
         {
+            // If nothing is selected, clear plot model
             if (_selectedAppartments.Count <= 0)
             {
                 Plot.Model = null;
@@ -105,7 +118,6 @@ namespace GUI.ViewModel
             Plot.Model.Title = "Data";
             Plot.InvalidatePlot();
         }
-        private IDataProvider _dataProvider;
 
         #endregion //Plot handling
 
