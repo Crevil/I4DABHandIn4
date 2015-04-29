@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using GUI.ViewModel;
+using OxyPlot.Wpf;
 
 namespace GUI
 {
@@ -21,17 +22,9 @@ namespace GUI
 
             InitializeComponent();
 
-            AppartmentListBox.SelectedIndex = 0;
             _viewModel = new MainWindowModel();
             DataContext = _viewModel;
-            _viewModel.GraphDataChanged += RedrawPlot;
 
-        }
-
-        private void RedrawPlot(object sender, EventArgs eventArgs)
-        {
-            if (GraphPlot == null) return;
-            GraphPlot.InvalidatePlot();
         }
 
         private readonly Stopwatch _stopwatch = new Stopwatch();
@@ -41,9 +34,13 @@ namespace GUI
         {
             if (_stopwatch.ElapsedMilliseconds <= _lastUpdateMilliSeconds + 5000) return;
 
-            _viewModel.Graph.UpdateModel();
+            if (_viewModel == null) return;
+            if (_viewModel.Graph == null) return;
+            if (_viewModel.Plot == null) return;
 
-            GraphPlot.InvalidatePlot();
+            _viewModel.Graph.UpdateModel();
+            _viewModel.Plot.InvalidatePlot();
+
             _lastUpdateMilliSeconds = _stopwatch.ElapsedMilliseconds;
         }
     }

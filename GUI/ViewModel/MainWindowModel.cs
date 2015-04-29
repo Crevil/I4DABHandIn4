@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using DAL.Entities;
 using GUI.Annotations;
 using GUI.ViewModel.MultiSelection;
+using OxyPlot.Wpf;
 
 namespace GUI.ViewModel
 {
@@ -36,20 +37,48 @@ namespace GUI.ViewModel
         public event EventHandler SensorSelectionChanged;
         #endregion // Sensor lists
 
+        #region Plot handling
         public Graph.Graph Graph { get; set; }
-        public event EventHandler GraphDataChanged;
         public Commands Commands { get; set; }
 
+        private PlotView _plot;
+        public PlotView Plot
+        {
+            get { return _plot; }
+            set
+            {
+                if (_plot == value) return;
+                _plot = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private void AppartmentsSelectionChanged()
+        {
+            if (_selectedAppartments.Count <= 0)
+            {
+                Plot.Model = null;
+                return;
+            }
+
+            _dataProvider = new AppartmentTemperatureDataProvider(_selectedAppartments);
+            Graph = new Graph.Graph(_dataProvider);
+
+            Plot.Model = Graph.PlotModel;
+            Plot.Model.Title = "Data";
+            Plot.InvalidatePlot();
+        }
         private IDataProvider _dataProvider;
+
+        #endregion //Plot handling
 
         public MainWindowModel()
         {
             Appartments = new Appartments();
             Sensors = new Sensors();
-            Commands = new Commands();
-            //_dataProvider = new AppartmentTemperatureDataProvider(_selectedAppartments);
-            //Graph = new Graph.Graph(_dataProvider);
+            Plot = new PlotView();
 
+            Commands = new Commands();
             #region Setup selection event handlers
             _selectedSensors.CollectionChanged += (sender, e) =>
             {
@@ -64,14 +93,7 @@ namespace GUI.ViewModel
             };
             #endregion //  Setup selection event handlers
 
-            _selectedAppartments.CollectionChanged += (sender, e) =>
-            {
-                _dataProvider = new AppartmentTemperatureDataProvider(_selectedAppartments);
-                Graph = new Graph.Graph(_dataProvider);
-                Graph.PlotModel.InvalidatePlot(true);
-                if(PropertyChanged != null) PropertyChanged(sender, new PropertyChangedEventArgs("Graph"));
-                if (GraphDataChanged != null) GraphDataChanged(sender, e);
-            };
+            _selectedAppartments.CollectionChanged += (sender, e) => AppartmentsSelectionChanged();
         }
 
 
