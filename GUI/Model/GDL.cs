@@ -1,42 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DAL;
 using DAL.Entities;
 
+
 namespace GUI.Model
 {
     public class GDL
     {
-        private static int _jsonCounter = 0;
+        static private DbRepository repository = new DbRepository();
 
-        static public Task LoadOriginal()
+        static public void LoadOriginal()
         {
             string originalUrl = "http://userportal.iha.dk/~jrt/i4dab/E14/HandIn4/GFKSC002_original.txt";
 
-            Tuple<List<Appartment>, List<Sensor>> t = JSONDeserialisator.DeserialiseOriginalFile(StringDownloader.DownloadStringFromURL(originalUrl));
+            Tuple<ICollection<Appartment>, ICollection<Sensor>> t = JSONDeserialisator.DeserialiseOriginalFile(StringDownloader.DownloadStringFromURL(originalUrl));
 
-            // do something to DB
-            return null;
+            repository.AddCollectionOfAppartments(t.Item1);
+            repository.AddCollectionOfSensors(t.Item2);
+
+            // CALL VIEW UPDATE 
         }
 
-        static public Task LoadNextJson()
+        static public ICollection<Measurement> LoadJson(int nr)
         {
             string begin = "http://userportal.iha.dk/~jrt/i4dab/E14/HandIn4/dataGDL/data/";
             string end = ".json";
-            List<Measurement> test = JSONDeserialisator.DeserialiseMeasurement(StringDownloader.DownloadStringFromURL(begin + _jsonCounter.ToString() + end));
-
-            
-            // do something to the DB
-            return null;
+            return JSONDeserialisator.DeserialiseMeasurement(StringDownloader.DownloadStringFromURL(begin + nr.ToString() + end));
         }
 
 
          public ICollection<Measurement> GetMeasurements(ICollection<Appartment> appartments, Sensor sensor )
          {
              return null;
+
+             // WHAT IS THIS CRAP??
          }
     }
 }

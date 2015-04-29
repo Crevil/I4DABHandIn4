@@ -15,6 +15,12 @@ namespace GUI.ViewModel
 {
     public class MainWindowModel : INotifyPropertyChanged
     {
+        private int max = 11803;
+
+        public Commands Commands { get; set; }
+        public Progress Progress { get; set; }
+
+
         public MainWindowModel()
         {
             //var db = new DbRepository();
@@ -37,6 +43,10 @@ namespace GUI.ViewModel
 
             Commands = new Commands();
             Plot = new PlotView();
+
+            // Initialisere progress class og workeren
+            Progress = new Progress(0, max);
+            Commands.Worker = new Worker(Progress);
 
             SensorTypes = new ObservableCollection<string>();
 
@@ -85,7 +95,7 @@ namespace GUI.ViewModel
 
         public event EventHandler SensorSelectionChanged;
         #endregion // Sensor lists
-        public Commands Commands { get; set; }
+        
 
         #region Plot handling
         public Graph.Graph Graph { get; set; }
@@ -131,5 +141,12 @@ namespace GUI.ViewModel
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
         #endregion // PropertyChanged
+
+        #region Backgroundworker
+
+
+
+
+        #endregion
     }
 }
