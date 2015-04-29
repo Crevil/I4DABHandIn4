@@ -19,16 +19,17 @@ namespace GUI.ViewModel
             Appartments = new Appartments();    // List of appartments on GUI
             Sensors = new Sensors();
             SensorTypes = new ObservableCollection<string>();
+            Plot = new PlotView();
 
             foreach (var s in Sensors.GroupBy(g => g.Description))// List of sensortypes on GUI
             {
                 SensorTypes.Add(s.Key);
             }
 
-                        
+
+            Commands = new Commands();
             
             
-            Plot = new PlotView();
 
             #region Setup selection event handlers
             _selectedSensors.CollectionChanged += (sender, e) =>
@@ -107,58 +108,6 @@ namespace GUI.ViewModel
         private IDataProvider _dataProvider;
 
         #endregion //Plot handling
-
-<<<<<<< .mine
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-=======
-        public MainWindowModel()
-        {
-            Appartments = new Appartments();
-            Sensors = new Sensors();
-            Plot = new PlotView();
-
-            Commands = new Commands();
-            #region Setup selection event handlers
-            _selectedSensors.CollectionChanged += (sender, e) =>
-            {
-                if (SensorSelectionChanged == null) return;
-                SensorSelectionChanged.Invoke(SelectedSensors, new SelectionChangedArgs { Sensors = SelectedSensors, Appartments = SelectedAppartments });
-            };
-
-            _selectedAppartments.CollectionChanged += (sender, e) =>
-            {
-                if (AppartmentSelectionChanged == null) return;
-                AppartmentSelectionChanged(SelectedAppartments, new SelectionChangedArgs { Sensors = SelectedSensors, Appartments = SelectedAppartments });
-            };
-            #endregion //  Setup selection event handlers
-
-            _selectedAppartments.CollectionChanged += (sender, e) => AppartmentsSelectionChanged();
-        }
-
->>>>>>> .theirs
 
         #region PropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
