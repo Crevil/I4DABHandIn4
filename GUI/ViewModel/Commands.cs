@@ -54,7 +54,7 @@ namespace GUI.ViewModel
             }
         }
 
-        public new event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
         private void NotifyPropertyChanged([CallerMemberName] string propertyName = null)
         {
             var handler = PropertyChanged;

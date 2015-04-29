@@ -1,40 +1,47 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using DAL.Entities;
 using GUI.Annotations;
 using GUI.ViewModel.Graph.Types;
 using OxyPlot;
+using OxyPlot.Wpf;
 
 namespace GUI.ViewModel.Graph
 {
     public class Graph : INotifyPropertyChanged
     {
-        private PlotModel _plotModel;
+        private PlotView _plotView;
         private readonly IGraphType _type;
-        private IDataProvider _dataProvider;
+        private ICollection<Measurement> _measurements;
 
-        public PlotModel PlotModel
+        public PlotView PlotView
         {
-            get { return _plotModel; }
-            set { _plotModel = value; OnPropertyChanged(); }
+            get { return _plotView; }
+            set { _plotView = value; OnPropertyChanged(); }
         }
 
-        public IDataProvider DataProvider
+        public Graph([NotNull] ICollection<Measurement> measurements, [NotNull] IGraphType type)
         {
-            get { return _dataProvider; }
-            set { _dataProvider = value; OnPropertyChanged(); }
-        }
+            if (measurements == null) throw new ArgumentNullException("measurements");
+            if (type == null) throw new ArgumentNullException("type");
 
-        public Graph(IDataProvider dataProvider)
-        {
-            _dataProvider = dataProvider;
+            _measurements = measurements;
+            _type = type;
 
-            PlotModel = new PlotModel();
-            _type = new TemperatureGraph {PlotModel = PlotModel, DataProvider = dataProvider};
+            PlotView = new PlotView {Model = new PlotModel()};
+
+            _type.PlotModel = PlotView.Model;
+            _type.Measurements = _measurements;
+
             _type.SetUpModel();
             _type.LoadData();
-        }
 
+            PlotView.Model.Title = "Data";
+            PlotView.InvalidatePlot();
+        }
         public void UpdateModel() { _type.UpdateModel(); }
 
         #region Plot markup

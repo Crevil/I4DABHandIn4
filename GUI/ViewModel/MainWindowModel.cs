@@ -8,14 +8,20 @@ using System.Windows.Controls;
 using DAL;
 using DAL.Entities;
 using GUI.Annotations;
+using GUI.Model;
+using GUI.ViewModel.Graph;
+using GUI.ViewModel.Graph.Types;
 using GUI.ViewModel.MultiSelection;
 using OxyPlot.Wpf;
 
 namespace GUI.ViewModel
 {
+{
     public class MainWindowModel : INotifyPropertyChanged
     {
+        private GDL _gdl;
         private int max = 11803;
+        public MainWindowModel([NotNull] GDL gdl)
 
         public Commands Commands { get; set; }
         public Progress Progress { get; set; }
@@ -23,54 +29,26 @@ namespace GUI.ViewModel
 
         public MainWindowModel()
         {
-            //var db = new DbRepository();
-            //Appartments = new ObservableCollection<Appartment>(db.Appartments);
+            if (gdl == null) throw new ArgumentNullException("gdl");
 
-            Appartments = new ObservableCollection<Appartment> // List of appartments on GUI
-            {
-                new Appartment {AppartmentId = 1},
-                new Appartment {AppartmentId = 2},
-                new Appartment {AppartmentId = 3}
-            };
-
-            Sensors = new ObservableCollection<Sensor> // List of sensors on GUI
-            {
-                new Sensor {Description = "Sensor Test1"},
-                new Sensor {Description = "Sensor Test1"},
-                new Sensor {Description = "Sensor Test2"},
-                new Sensor {Description = "Sensor Test3"}
-            };
+            _gdl = gdl;
 
             Commands = new Commands();
-            Plot = new PlotView();
 
             // Initialisere progress class og workeren
             Progress = new Progress(0, max);
             Commands.Worker = new Worker(Progress);
 
+            Appartments = new ObservableCollection<Appartment>(gdl.GetAppartments());
+            Sensors = new ObservableCollection<Sensor>(_gdl.GetSensors()); // List of sensors on GUI
+
             SensorTypes = new ObservableCollection<string>();
 
             foreach (var s in Sensors.GroupBy(g => g.Description))// List of sensortypes on GUI
-            {
                 SensorTypes.Add(s.Key);
-            }
 
-            #region Setup selection event handlers
-            _selectedSensors.CollectionChanged += (sender, e) =>
-            {
-                if (SensorSelectionChanged == null) return;
-                SensorSelectionChanged.Invoke(SelectedSensors, new SelectionChangedArgs { Sensors = SelectedSensors, Appartments = SelectedAppartments });
-            };
-
-            _selectedAppartments.CollectionChanged += (sender, e) =>
-            {
-                if (AppartmentSelectionChanged == null) return;
-                AppartmentSelectionChanged(SelectedAppartments, new SelectionChangedArgs { Sensors = SelectedSensors, Appartments = SelectedAppartments });
-            };
-
-
-            _selectedAppartments.CollectionChanged += (sender, e) => AppartmentsSelectionChanged();
-            #endregion //  Setup selection event handlers
+            // Setup selection event handler
+            _selectedAppartments.CollectionChanged += (sender, e) => SelectionChanged();
         }
 
         #region Appartment handling
@@ -87,46 +65,60 @@ namespace GUI.ViewModel
         #region Sensor handling
         public ObservableCollection<string> SensorTypes { get; private set; }
         public ObservableCollection<Sensor> Sensors { get; private set; }
-        private readonly ObservableCollection<Sensor> _selectedSensors = new ObservableCollection<Sensor>();
-        public ObservableCollection<Sensor> SelectedSensors
+
+        private string _selectedSensorType;
+
+        public string SelectedSensorType
         {
-            get { return _selectedSensors; }
+            get { return _selectedSensorType; }
+            set
+            {
+                if (_selectedSensorType == value) return;
+                _selectedSensorType = value;
+                SelectionChanged(); 
+            }
         }
 
-        public event EventHandler SensorSelectionChanged;
         #endregion // Sensor lists
         
 
         #region Plot handling
-        public Graph.Graph Graph { get; set; }
-        private PlotView _plot;
-        private IDataProvider _dataProvider;
-        public PlotView Plot
+
+        private Graph.Graph _graph;
+        public Graph.Graph Graph
         {
-            get { return _plot; }
+            get { return _graph; }
             set
             {
-                if (Equals(_plot, value)) return;
-                _plot = value;
+                if (_graph == value) return;
+                _graph = value;
                 OnPropertyChanged();
             }
         }
 
-        private void AppartmentsSelectionChanged()
+        private void SelectionChanged()
         {
             // If nothing is selected, clear plot model
-            if (_selectedAppartments.Count <= 0)
-            {
-                Plot.Model = null;
+            if ((SelectedAppartments.Count <= 0 || SelectedSensorType == null) && Graph != null )
                 return;
+
+            var measurements = _gdl.GetMeasurements(SelectedAppartments, SelectedSensorType);
+            // This might be done better! Breaking OCP
+            IGraphType type;
+            switch (SelectedSensorType)
+            {
+                case "Temperatue":
+                    type = new TemperatureGraph();
+                    break;
+                case "Humidity":
+                    type = new HumidityGraph();
+                    break;
+                default:
+                    type = new TemperatureGraph();
+                    break;
             }
 
-            _dataProvider = new AppartmentTemperatureDataProvider(_selectedAppartments);
-            Graph = new Graph.Graph(_dataProvider);
-
-            Plot.Model = Graph.PlotModel;
-            Plot.Model.Title = "Data";
-            Plot.InvalidatePlot();
+            Graph = new Graph.Graph(measurements, type);
         }
 
         #endregion //Plot handling

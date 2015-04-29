@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -11,7 +11,7 @@ using OxyPlot.Series;
 
 namespace GUI.ViewModel.Graph.Types
 {
-    public class TemperatureGraph : IGraphType
+    public class HumidityGraph : IGraphType
     {
         public ICollection<Measurement> Measurements { get; set; }
 
@@ -41,7 +41,7 @@ namespace GUI.ViewModel.Graph.Types
                 Position = AxisPosition.Left,
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dot,
-                Title = "Temperature"
+                Title = "Humidity"
             };
             PlotModel.Axes.Add(valueAxisLeft);
         }

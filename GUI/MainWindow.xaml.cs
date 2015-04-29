@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using GUI.Model;
 using GUI.ViewModel;
 using OxyPlot.Wpf;
 
@@ -17,31 +18,35 @@ namespace GUI
 
         public MainWindow()
         {
-            CompositionTarget.Rendering += CompositionTargetRendering;
-            _stopwatch.Start();
+            /* Live update
+            //CompositionTarget.Rendering += CompositionTargetRendering;
+            //_stopwatch.Start();
+             * End live update */
 
             InitializeComponent();
 
-            _viewModel = new MainWindowModel();
+            var gdl = new GDL();
+            _viewModel = new MainWindowModel(gdl);
             DataContext = _viewModel;
 
         }
 
-        private readonly Stopwatch _stopwatch = new Stopwatch();
-        private long _lastUpdateMilliSeconds;
+        #region Live update
+        //private readonly Stopwatch _stopwatch = new Stopwatch();
+        //private long _lastUpdateMilliSeconds;
 
-        private void CompositionTargetRendering(object sender, EventArgs e)
-        {
-            if (_stopwatch.ElapsedMilliseconds <= _lastUpdateMilliSeconds + 5000) return;
+        //private void CompositionTargetRendering(object sender, EventArgs e)
+        //{
+        //    if (_stopwatch.ElapsedMilliseconds <= _lastUpdateMilliSeconds + 5000) return;
 
-            if (_viewModel == null) return;
-            if (_viewModel.Graph == null) return;
-            if (_viewModel.Plot == null) return;
+        //    if (_viewModel == null) return;
+        //    if (_viewModel.Graph == null) return;
 
-            _viewModel.Graph.UpdateModel();
-            _viewModel.Plot.InvalidatePlot();
+        //    _viewModel.Graph.UpdateModel();
+        //    _viewModel.Graph.PlotView.InvalidatePlot();
 
-            _lastUpdateMilliSeconds = _stopwatch.ElapsedMilliseconds;
-        }
+        //    _lastUpdateMilliSeconds = _stopwatch.ElapsedMilliseconds;
+        //}
+        #endregion // Live update
     }
 }
