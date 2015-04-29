@@ -28,7 +28,7 @@ namespace TestOfDal
             sensorRepos.Add(sensortest).Wait();
             measureRepos.Add(testMeasurement).Wait();
 
-            var read = appRepos.FindWithInclude(a => a.AppartmentId == 13, m => m.Measurements).Result;
+            var read = appRepos.FindWithInclude(a=> a.AppartmentId == 13 , m => m.Measurements).Result;
             /*JSONDeserialisator ser = new JSONDeserialisator();
 
             string begin = "http://userportal.iha.dk/~jrt/i4dab/E14/HandIn4/dataGDL/data/";
