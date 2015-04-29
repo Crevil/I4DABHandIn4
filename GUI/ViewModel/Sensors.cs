@@ -9,6 +9,8 @@ namespace GUI.ViewModel
         public Sensors()
         {
             Add(new Sensor { Description = "Sensor Test1" });
+            Add(new Sensor { Description = "Sensor Test1" });
+
             Add(new Sensor { Description = "Sensor Test2" });
             Add(new Sensor { Description = "Sensor Test3" });
 
