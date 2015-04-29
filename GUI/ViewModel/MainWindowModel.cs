@@ -3,6 +3,8 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows;
+using System.Windows.Controls;
 using DAL.Entities;
 using GUI.Annotations;
 using GUI.ViewModel.MultiSelection;
@@ -36,6 +38,7 @@ namespace GUI.ViewModel
 
         public Graph.Graph Graph { get; set; }
         public event EventHandler GraphDataChanged;
+        public Commands Commands { get; set; }
 
         private IDataProvider _dataProvider;
 
@@ -43,7 +46,7 @@ namespace GUI.ViewModel
         {
             Appartments = new Appartments();
             Sensors = new Sensors();
-
+            Commands = new Commands();
             //_dataProvider = new AppartmentTemperatureDataProvider(_selectedAppartments);
             //Graph = new Graph.Graph(_dataProvider);
 
@@ -70,6 +73,7 @@ namespace GUI.ViewModel
                 if (GraphDataChanged != null) GraphDataChanged(sender, e);
             };
         }
+
 
         #region PropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
