@@ -18,8 +18,10 @@ namespace GUI
 
         public MainWindow()
         {
-            CompositionTarget.Rendering += CompositionTargetRendering;
-            _stopwatch.Start();
+            /* Live update
+            //CompositionTarget.Rendering += CompositionTargetRendering;
+            //_stopwatch.Start();
+             * End live update */
 
             InitializeComponent();
 
@@ -29,20 +31,22 @@ namespace GUI
 
         }
 
-        private readonly Stopwatch _stopwatch = new Stopwatch();
-        private long _lastUpdateMilliSeconds;
+        #region Live update
+        //private readonly Stopwatch _stopwatch = new Stopwatch();
+        //private long _lastUpdateMilliSeconds;
 
-        private void CompositionTargetRendering(object sender, EventArgs e)
-        {
-            if (_stopwatch.ElapsedMilliseconds <= _lastUpdateMilliSeconds + 5000) return;
+        //private void CompositionTargetRendering(object sender, EventArgs e)
+        //{
+        //    if (_stopwatch.ElapsedMilliseconds <= _lastUpdateMilliSeconds + 5000) return;
 
-            if (_viewModel == null) return;
-            if (_viewModel.Graph == null) return;
+        //    if (_viewModel == null) return;
+        //    if (_viewModel.Graph == null) return;
 
-            _viewModel.Graph.UpdateModel();
-            _viewModel.Graph.PlotView.InvalidatePlot();
+        //    _viewModel.Graph.UpdateModel();
+        //    _viewModel.Graph.PlotView.InvalidatePlot();
 
-            _lastUpdateMilliSeconds = _stopwatch.ElapsedMilliseconds;
-        }
+        //    _lastUpdateMilliSeconds = _stopwatch.ElapsedMilliseconds;
+        //}
+        #endregion // Live update
     }
 }
