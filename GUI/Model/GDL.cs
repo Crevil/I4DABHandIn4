@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,7 +37,46 @@ namespace GUI.Model
 
          public ICollection<Measurement> GetMeasurements(ICollection<Appartment> appartments, Sensor sensor )
          {
-             return null;
+             var r = new Random();
+
+             var list = new List<Measurement>();
+
+             for (var i = 0; i < appartments.Count; i++)
+             {
+                 for (var j = 4; j >= 0; j--)
+                 {
+
+                     list.Add(
+                         new Measurement
+                         {
+                             Timestamp =
+                                 TimeHelpers.ConvertToUnixTimestamp(DateTime.Now.AddSeconds(j * -5)).ToString(CultureInfo.CurrentCulture),
+                             Value = r.Next(0, 20),
+                             SensorId = i,
+                             AppartmentId = appartments.ElementAt(i).AppartmentId
+                         });
+                 }
+             }
+             return list;
          }
+    }
+
+
+    /// <summary>
+    /// Helper class for time convertion between doubles and DateTime
+    /// </summary>
+    public static class TimeHelpers
+    {
+        public static double ConvertToUnixTimestamp(DateTime date)
+        {
+            var origin = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+            var diff = date.ToUniversalTime() - origin;
+            return Math.Floor(diff.TotalSeconds);
+        }
+        public static DateTime ConvertFromUnixTimestamp(double timestamp)
+        {
+            var origin = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+            return origin.AddSeconds(timestamp);
+        }
     }
 }

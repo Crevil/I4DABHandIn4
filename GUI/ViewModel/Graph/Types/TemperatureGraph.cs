@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using DAL.Entities;
 using GUI.Annotations;
+using GUI.Model;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
@@ -12,8 +13,8 @@ namespace GUI.ViewModel.Graph.Types
 {
     public class TemperatureGraph : IGraphType
     {
-        private PlotModel _plotModel; 
-        public IDataProvider DataProvider { get; set; }
+        private PlotModel _plotModel;
+        public ICollection<Measurement> Measurements { get; set; }
 
         public PlotModel PlotModel
         {
@@ -56,9 +57,7 @@ namespace GUI.ViewModel.Graph.Types
 
         public void LoadData()
         {
-            var measurements = DataProvider.GetData();
-
-            var dataPerDetector = SelectMeasurements(measurements);
+            var dataPerDetector = SelectMeasurements(Measurements);
 
             foreach (var data in dataPerDetector)
             {
@@ -83,8 +82,7 @@ namespace GUI.ViewModel.Graph.Types
         {
             if (_plotModel.Series.Count == 0) return;
 
-            var measurements = DataProvider.GetUpdateData(DateTime.Now);
-            var dataPerDetector = SelectMeasurements(measurements);
+            var dataPerDetector = SelectMeasurements(Measurements);
 
             foreach (var data in dataPerDetector)
             {
@@ -96,7 +94,7 @@ namespace GUI.ViewModel.Graph.Types
             }
         }
 
-        private IEnumerable<IGrouping<int, Measurement>> SelectMeasurements(List<Measurement> measurements)
+        private IEnumerable<IGrouping<int, Measurement>> SelectMeasurements(ICollection<Measurement> measurements)
         {
             return measurements.GroupBy(m => m.SensorId).OrderBy(m => m.Key).ToList();
         }
@@ -111,7 +109,7 @@ namespace GUI.ViewModel.Graph.Types
                         (
                             new DataPoint(
                                 Axis.ToDouble(
-                                    AppartmentTemperatureDataProvider.ConvertFromUnixTimestamp(
+                                    TimeHelpers.ConvertFromUnixTimestamp(
                                         double.Parse(d.Timestamp, CultureInfo.CurrentCulture)
                                         )
                                     ),

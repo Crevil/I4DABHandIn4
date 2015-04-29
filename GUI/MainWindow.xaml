@@ -42,16 +42,17 @@
 
         <ListBox x:Name="SensorListBox"
                  ItemsSource="{Binding Sensors}"
-                 multiSelection:MultiSelectorBehaviours.SynchronizedSelectedItems="{Binding SelectedSensors}" 
+                 SelectedItem="{Binding SelectedSensor}"
+                 IsSynchronizedWithCurrentItem="True"
                  DisplayMemberPath="Description"
-                 SelectionMode="Multiple"
+                 SelectionMode="Single"
                  Grid.Column="2"
                  Grid.Row="0"
                  Grid.RowSpan="2"
                  Margin="10">
         </ListBox>
         
-        <ContentControl x:Name="GraphPlot" Content="{Binding Plot}" Grid.Column="4" Grid.Row="1"/>
+        <ContentControl x:Name="GraphPlot" Content="{Binding Graph.PlotView}" Grid.Column="4" Grid.Row="1"/>
         
         <StackPanel Grid.Column="4" Grid.Row="0" Height="50" VerticalAlignment="Top" Orientation="Horizontal">
             <Button Command="{Binding Commands.ClickStaticCommand}" IsEnabled="{Binding Commands.StaticButtonEnabled, Mode=TwoWay}" x:Name="Static" Margin="10" VerticalAlignment="Center" Height="32" Padding="5">Add Static Data</Button>

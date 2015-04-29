@@ -6,7 +6,7 @@ namespace GUI.ViewModel.MultiSelection
 {
     public class SelectionChangedArgs : EventArgs
     {
-        public ObservableCollection<Sensor> Sensors { get; set; }
+        public Sensor Sensor { get; set; }
         public ObservableCollection<Appartment> Appartments { get; set; }
 
     }

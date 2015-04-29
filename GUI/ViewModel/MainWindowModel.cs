@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using DAL;
 using DAL.Entities;
 using GUI.Annotations;
+using GUI.Model;
 using GUI.ViewModel.MultiSelection;
 using OxyPlot.Wpf;
 
@@ -36,7 +37,6 @@ namespace GUI.ViewModel
             };
 
             Commands = new Commands();
-            Plot = new PlotView();
 
             SensorTypes = new ObservableCollection<string>();
 
@@ -46,16 +46,11 @@ namespace GUI.ViewModel
             }
 
             #region Setup selection event handlers
-            _selectedSensors.CollectionChanged += (sender, e) =>
-            {
-                if (SensorSelectionChanged == null) return;
-                SensorSelectionChanged.Invoke(SelectedSensors, new SelectionChangedArgs { Sensors = SelectedSensors, Appartments = SelectedAppartments });
-            };
 
             _selectedAppartments.CollectionChanged += (sender, e) =>
             {
                 if (AppartmentSelectionChanged == null) return;
-                AppartmentSelectionChanged(SelectedAppartments, new SelectionChangedArgs { Sensors = SelectedSensors, Appartments = SelectedAppartments });
+                AppartmentSelectionChanged(SelectedAppartments, new SelectionChangedArgs { Sensor = SelectedSensor, Appartments = SelectedAppartments });
             };
 
 
@@ -77,27 +72,27 @@ namespace GUI.ViewModel
         #region Sensor handling
         public ObservableCollection<string> SensorTypes { get; private set; }
         public ObservableCollection<Sensor> Sensors { get; private set; }
-        private readonly ObservableCollection<Sensor> _selectedSensors = new ObservableCollection<Sensor>();
-        public ObservableCollection<Sensor> SelectedSensors
+        
+        private Sensor _selectedSensor;
+        public Sensor SelectedSensor
         {
-            get { return _selectedSensors; }
+            get { return _selectedSensor; }
+            set { _selectedSensor = value; }
         }
 
-        public event EventHandler SensorSelectionChanged;
         #endregion // Sensor lists
         public Commands Commands { get; set; }
 
         #region Plot handling
-        public Graph.Graph Graph { get; set; }
-        private PlotView _plot;
-        private IDataProvider _dataProvider;
-        public PlotView Plot
+
+        private Graph.Graph _graph;
+        public Graph.Graph Graph
         {
-            get { return _plot; }
+            get { return _graph; }
             set
             {
-                if (Equals(_plot, value)) return;
-                _plot = value;
+                if (_graph == value) return;
+                _graph = value;
                 OnPropertyChanged();
             }
         }
@@ -105,18 +100,14 @@ namespace GUI.ViewModel
         private void AppartmentsSelectionChanged()
         {
             // If nothing is selected, clear plot model
-            if (_selectedAppartments.Count <= 0)
+            if (_selectedAppartments.Count <= 0 && Graph != null)
             {
-                Plot.Model = null;
+                Graph.PlotView.Model = null;
                 return;
             }
+            var g = new GDL();
+            Graph = new Graph.Graph(g.GetMeasurements(_selectedAppartments, _selectedSensor));
 
-            _dataProvider = new AppartmentTemperatureDataProvider(_selectedAppartments);
-            Graph = new Graph.Graph(_dataProvider);
-
-            Plot.Model = Graph.PlotModel;
-            Plot.Model.Title = "Data";
-            Plot.InvalidatePlot();
         }
 
         #endregion //Plot handling

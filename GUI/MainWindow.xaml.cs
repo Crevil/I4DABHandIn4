@@ -36,10 +36,9 @@ namespace GUI
 
             if (_viewModel == null) return;
             if (_viewModel.Graph == null) return;
-            if (_viewModel.Plot == null) return;
 
             _viewModel.Graph.UpdateModel();
-            _viewModel.Plot.InvalidatePlot();
+            _viewModel.Graph.PlotView.InvalidatePlot();
 
             _lastUpdateMilliSeconds = _stopwatch.ElapsedMilliseconds;
         }

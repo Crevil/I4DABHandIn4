@@ -1,40 +1,38 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using DAL.Entities;
 using GUI.Annotations;
 using GUI.ViewModel.Graph.Types;
 using OxyPlot;
+using OxyPlot.Wpf;
 
 namespace GUI.ViewModel.Graph
 {
     public class Graph : INotifyPropertyChanged
     {
-        private PlotModel _plotModel;
+        private PlotView _plotView;
         private readonly IGraphType _type;
-        private IDataProvider _dataProvider;
+        private ICollection<Measurement> _measurements;
 
-        public PlotModel PlotModel
+        public PlotView PlotView
         {
-            get { return _plotModel; }
-            set { _plotModel = value; OnPropertyChanged(); }
+            get { return _plotView; }
+            set { _plotView = value; OnPropertyChanged(); }
         }
 
-        public IDataProvider DataProvider
+        public Graph(ICollection<Measurement> measurements)
         {
-            get { return _dataProvider; }
-            set { _dataProvider = value; OnPropertyChanged(); }
-        }
-
-        public Graph(IDataProvider dataProvider)
-        {
-            _dataProvider = dataProvider;
-
-            PlotModel = new PlotModel();
-            _type = new TemperatureGraph {PlotModel = PlotModel, DataProvider = dataProvider};
+            _measurements = measurements;
+            PlotView = new PlotView();
+            PlotView.Model = new PlotModel();
+            _type = new TemperatureGraph {PlotModel = PlotView.Model, Measurements = _measurements};
             _type.SetUpModel();
             _type.LoadData();
-        }
 
+            PlotView.Model.Title = "Data";
+            PlotView.InvalidatePlot();
+        }
         public void UpdateModel() { _type.UpdateModel(); }
 
         #region Plot markup
