@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using GUI.Model;
 using GUI.ViewModel;
 using OxyPlot.Wpf;
 
@@ -22,7 +23,8 @@ namespace GUI
 
             InitializeComponent();
 
-            _viewModel = new MainWindowModel();
+            var gdl = new GDL();
+            _viewModel = new MainWindowModel(gdl);
             DataContext = _viewModel;
 
         }

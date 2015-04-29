@@ -9,6 +9,8 @@ using DAL;
 using DAL.Entities;
 using GUI.Annotations;
 using GUI.Model;
+using GUI.ViewModel.Graph;
+using GUI.ViewModel.Graph.Types;
 using GUI.ViewModel.MultiSelection;
 using OxyPlot.Wpf;
 
@@ -16,46 +18,25 @@ namespace GUI.ViewModel
 {
     public class MainWindowModel : INotifyPropertyChanged
     {
-        public MainWindowModel()
+        private GDL _gdl;
+        public MainWindowModel([NotNull] GDL gdl)
         {
-            //var db = new DbRepository();
-            //Appartments = new ObservableCollection<Appartment>(db.Appartments);
+            if (gdl == null) throw new ArgumentNullException("gdl");
 
-            Appartments = new ObservableCollection<Appartment> // List of appartments on GUI
-            {
-                new Appartment {AppartmentId = 1},
-                new Appartment {AppartmentId = 2},
-                new Appartment {AppartmentId = 3}
-            };
-
-            Sensors = new ObservableCollection<Sensor> // List of sensors on GUI
-            {
-                new Sensor {Description = "Sensor Test1"},
-                new Sensor {Description = "Sensor Test1"},
-                new Sensor {Description = "Sensor Test2"},
-                new Sensor {Description = "Sensor Test3"}
-            };
+            _gdl = gdl;
 
             Commands = new Commands();
+
+            Appartments = new ObservableCollection<Appartment>(gdl.GetAppartments());
+            Sensors = new ObservableCollection<Sensor>(_gdl.GetSensors()); // List of sensors on GUI
 
             SensorTypes = new ObservableCollection<string>();
 
             foreach (var s in Sensors.GroupBy(g => g.Description))// List of sensortypes on GUI
-            {
                 SensorTypes.Add(s.Key);
-            }
 
-            #region Setup selection event handlers
-
-            _selectedAppartments.CollectionChanged += (sender, e) =>
-            {
-                if (AppartmentSelectionChanged == null) return;
-                AppartmentSelectionChanged(SelectedAppartments, new SelectionChangedArgs { Sensor = SelectedSensor, Appartments = SelectedAppartments });
-            };
-
-
+            // Setup selection event handler
             _selectedAppartments.CollectionChanged += (sender, e) => SelectionChanged();
-            #endregion //  Setup selection event handlers
         }
 
         #region Appartment handling
@@ -73,15 +54,15 @@ namespace GUI.ViewModel
         public ObservableCollection<string> SensorTypes { get; private set; }
         public ObservableCollection<Sensor> Sensors { get; private set; }
 
-        private Sensor _sensor;
+        private string _selectedSensorType;
 
-        public Sensor SelectedSensor
+        public string SelectedSensorType
         {
-            get { return _sensor; }
+            get { return _selectedSensorType; }
             set
             {
-                if (_sensor == value) return;
-                _sensor = value;
+                if (_selectedSensorType == value) return;
+                _selectedSensorType = value;
                 SelectionChanged(); 
             }
         }
@@ -106,12 +87,26 @@ namespace GUI.ViewModel
         private void SelectionChanged()
         {
             // If nothing is selected, clear plot model
-            if ((SelectedAppartments.Count <= 0 || SelectedSensor == null) && Graph != null )
+            if ((SelectedAppartments.Count <= 0 || SelectedSensorType == null) && Graph != null )
                 return;
-            
-            var g = new GDL();
-            Graph = new Graph.Graph(g.GetMeasurements(SelectedAppartments, SelectedSensor));
 
+            var measurements = _gdl.GetMeasurements(SelectedAppartments, SelectedSensorType);
+            // This might be done better! Breaking OCP
+            IGraphType type;
+            switch (SelectedSensorType)
+            {
+                case "Temperatue":
+                    type = new TemperatureGraph();
+                    break;
+                case "Humidity":
+                    type = new HumidityGraph();
+                    break;
+                default:
+                    type = new TemperatureGraph();
+                    break;
+            }
+
+            Graph = new Graph.Graph(measurements, type);
         }
 
         #endregion //Plot handling

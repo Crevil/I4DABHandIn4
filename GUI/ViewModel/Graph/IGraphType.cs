@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using DAL.Entities;
 using OxyPlot;
 
 namespace GUI.ViewModel.Graph
@@ -6,6 +8,7 @@ namespace GUI.ViewModel.Graph
     {
         void SetUpModel();
         PlotModel PlotModel { get; set; }
+        ICollection<Measurement> Measurements { get; set; } 
         void UpdateModel();
         void LoadData();
     }

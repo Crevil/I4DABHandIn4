@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using DAL.Entities;
 using GUI.Annotations;
@@ -21,16 +23,19 @@ namespace GUI.ViewModel.Graph
             set { _plotView = value; OnPropertyChanged(); }
         }
 
-        public Graph(ICollection<Measurement> measurements)
+        public Graph([NotNull] ICollection<Measurement> measurements, [NotNull] IGraphType type)
         {
+            if (measurements == null) throw new ArgumentNullException("measurements");
+            if (type == null) throw new ArgumentNullException("type");
+
             _measurements = measurements;
+            _type = type;
+
             PlotView = new PlotView {Model = new PlotModel()};
 
-            _type = new TemperatureGraph
-            {
-                PlotModel = PlotView.Model, 
-                Measurements = _measurements
-            };
+            _type.PlotModel = PlotView.Model;
+            _type.Measurements = _measurements;
+
             _type.SetUpModel();
             _type.LoadData();
 

@@ -20,11 +20,15 @@
         </Grid.RowDefinitions>
 
         <GridSplitter Grid.Column="1"
+                      Grid.Row="0"
+                      Grid.RowSpan="2"
                       HorizontalAlignment="Center" 
                       ShowsPreview="true" VerticalAlignment="Stretch" 
                       Width="2"/>
 
         <GridSplitter Grid.Column="3"
+                      Grid.Row="0"
+                      Grid.RowSpan="2"
                       HorizontalAlignment="Center" 
                       ShowsPreview="true" VerticalAlignment="Stretch" 
                       Width="2"/>
@@ -41,10 +45,9 @@
         </ListBox>
 
         <ListBox x:Name="SensorListBox"
-                 ItemsSource="{Binding Sensors}"
-                 SelectedItem="{Binding SelectedSensor}"
+                 ItemsSource="{Binding SensorTypes}"
+                 SelectedItem="{Binding SelectedSensorType}"
                  IsSynchronizedWithCurrentItem="True"
-                 DisplayMemberPath="Description"
                  SelectionMode="Single"
                  Grid.Column="2"
                  Grid.Row="0"
