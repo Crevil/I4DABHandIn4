@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Data.Entity;
 using System.Linq;
 using System.Text;
@@ -18,6 +19,7 @@ namespace DAL
         public DbSet<Appartment> Appartments { get; set; }
         public DbSet<Sensor> Sensors { get; set; }
         public DbSet<Measurement> Measurements { get; set; }
+        public DbSet<Log> Logs { get; set; } 
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -28,6 +30,10 @@ namespace DAL
 
             modelBuilder.Entity<Measurement>()
                 .HasRequired(m => m.Sensor);
+
+            modelBuilder.Entity<Appartment>().MapToStoredProcedures();
+            modelBuilder.Entity<Sensor>().MapToStoredProcedures();
+            modelBuilder.Entity<Measurement>().MapToStoredProcedures();
         }
     }
 }
