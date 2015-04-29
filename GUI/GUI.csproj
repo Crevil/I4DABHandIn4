@@ -64,19 +64,17 @@
     </ApplicationDefinition>
     <Compile Include="Model\GDL.cs" />
     <Compile Include="ViewModel\Commands.cs" />
+    <Compile Include="ViewModel\Graph\Types\HumidityGraph.cs" />
+    <Compile Include="ViewModel\Progress.cs" />
     <Compile Include="ViewModel\RelayCommand.cs" />
-    <Compile Include="ViewModel\AppartmentTemperatureDataProvider.cs" />
-    <Compile Include="ViewModel\DummyGraphData.cs" />
-    <Compile Include="ViewModel\DummyMeasurement.cs" />
     <Compile Include="ViewModel\Graph\IGraphType.cs" />
     <Compile Include="ViewModel\Graph\Types\TemperatureGraph.cs" />
-    <Compile Include="ViewModel\IDataProvider.cs" />
     <Compile Include="ViewModel\MainWindowModel.cs" />
     <Compile Include="ViewModel\MultiSelection\IListItemConverter.cs" />
     <Compile Include="ViewModel\MultiSelection\MultiSelectorBehaviours.cs" />
     <Compile Include="ViewModel\MultiSelection\SelectionChangedArgs.cs" />
     <Compile Include="ViewModel\MultiSelection\TwoListSynchronizer.cs" />
-    <Compile Include="ViewModel\Sensors.cs" />
+    <Compile Include="ViewModel\Worker.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -93,7 +91,6 @@
   <ItemGroup>
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ViewModel\Graph\Graph.cs" />
-    <Compile Include="ViewModel\Appartments.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

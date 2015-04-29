@@ -20,11 +20,15 @@
         </Grid.RowDefinitions>
 
         <GridSplitter Grid.Column="1"
+                      Grid.Row="0"
+                      Grid.RowSpan="2"
                       HorizontalAlignment="Center" 
                       ShowsPreview="true" VerticalAlignment="Stretch" 
                       Width="2"/>
 
         <GridSplitter Grid.Column="3"
+                      Grid.Row="0"
+                      Grid.RowSpan="2"
                       HorizontalAlignment="Center" 
                       ShowsPreview="true" VerticalAlignment="Stretch" 
                       Width="2"/>
@@ -41,23 +45,32 @@
         </ListBox>
 
         <ListBox x:Name="SensorListBox"
-                 ItemsSource="{Binding Sensors}"
-                 multiSelection:MultiSelectorBehaviours.SynchronizedSelectedItems="{Binding SelectedSensors}" 
-                 DisplayMemberPath="Description"
-                 SelectionMode="Multiple"
+                 ItemsSource="{Binding SensorTypes}"
+                 SelectedItem="{Binding SelectedSensorType}"
+                 IsSynchronizedWithCurrentItem="True"
+                 SelectionMode="Single"
                  Grid.Column="2"
                  Grid.Row="0"
                  Grid.RowSpan="2"
                  Margin="10">
         </ListBox>
         
-        <ContentControl x:Name="GraphPlot" Content="{Binding Plot}" Grid.Column="4" Grid.Row="1"/>
+        <ContentControl x:Name="GraphPlot" Content="{Binding Graph.PlotView}" Grid.Column="4" Grid.Row="1"/>
         
-        <StackPanel Grid.Column="4" Grid.Row="0" Height="50" VerticalAlignment="Top" Orientation="Horizontal">
+        <StackPanel Grid.Column="4" Grid.Row="0" Height="50" Width="370" VerticalAlignment="Top" Orientation="Horizontal" HorizontalAlignment="Left">
             <Button Command="{Binding Commands.ClickStaticCommand}" IsEnabled="{Binding Commands.StaticButtonEnabled, Mode=TwoWay}" x:Name="Static" Margin="10" VerticalAlignment="Center" Height="32" Padding="5">Add Static Data</Button>
-            <Button x:Name="Single" Margin="10" VerticalAlignment="Center" Height="32" Padding="5">Read Single</Button>
-            <Button Command="{Binding Commands.ClickLiveCommand}" Content="{Binding Commands.LiveButtonContent, Mode=TwoWay}" x:Name="Live" Margin="10" VerticalAlignment="Center" Height="32" Padding="5" ></Button>
+            <Button Command="{Binding Commands.ClickSingleCommand}" x:Name="Single" Margin="10" VerticalAlignment="Center" Height="32" Padding="5">Read Single</Button>
+            <Button Command="{Binding Commands.ClickLiveCommand}" Content="{Binding Commands.LiveButtonContent, Mode=TwoWay}" x:Name="Live" Margin="10" VerticalAlignment="Center" Height="32" Padding="5" ></Button>                   
         </StackPanel>
-        
+
+        <StackPanel Grid.Column="4" Grid.Row="0" Height="50" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <Label Content="{Binding Progress.Current, Mode=TwoWay}"></Label>
+                <Label>/</Label>
+                <Label Content="{Binding Progress.Max, Mode=TwoWay}" ></Label>
+            </StackPanel>
+ 
+        </StackPanel>
+
     </Grid>
 </Window>

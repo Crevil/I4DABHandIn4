@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,6 +19,8 @@ namespace GUI.ViewModel
 {
     public class Commands : INotifyPropertyChanged
     {
+        public Worker Worker { get; set; }
+
         private string _liveButtonContent;
         public string LiveButtonContent
         {
@@ -51,7 +54,7 @@ namespace GUI.ViewModel
             }
         }
 
-        public new event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
         private void NotifyPropertyChanged([CallerMemberName] string propertyName = null)
         {
             var handler = PropertyChanged;
@@ -74,7 +77,11 @@ namespace GUI.ViewModel
         private void StaticCommand()
         {
             StaticButtonEnabled = false;
-            GDL.LoadOriginal();
+            ThreadPool.QueueUserWorkItem(delegate
+            {
+                GDL.LoadOriginal();
+            });
+
         }
 
         private ICommand _liveCommand;
@@ -83,14 +90,37 @@ namespace GUI.ViewModel
             get
             {
                 return _liveCommand ??
-                   (_staticCommand = new RelayCommand(LiveCommand));
+                   (_liveCommand = new RelayCommand(LiveCommand));
             }
         }
 
         private void LiveCommand()
         {
+            if (LiveButtonContent == liveButtonTextRunning)
+            {
+                Worker.Cancel();
+            }
+            else
+            {
+                if (!Worker.DoLive()) return;
+            }
             LiveButtonContent = (_liveButtonContent == liveButtonTextNotRunning) ? liveButtonTextRunning : liveButtonTextNotRunning;
-            GDL.LoadOriginal();
+            
+        }
+
+        private ICommand _singleCommand;
+        public ICommand ClickSingleCommand
+        {
+            get
+            {
+                return _singleCommand ??
+                   (_singleCommand = new RelayCommand(SingleCommand));
+            }
+        }
+
+        private void SingleCommand()
+        {
+            Worker.DoSingle();
         }
     }
 }

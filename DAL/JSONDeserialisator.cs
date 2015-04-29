@@ -17,7 +17,7 @@ namespace DAL
     public static class JSONDeserialisator
     {
 
-        public static Tuple<List<Appartment>, List<Sensor>> DeserialiseOriginalFile(string json)
+        public static Tuple<ICollection<Appartment>, ICollection<Sensor>> DeserialiseOriginalFile(string json)
         {
             int appartmentBegin = json.IndexOf("[", 0);
             int appartmentEnd = json.IndexOf("]", appartmentBegin);
@@ -25,12 +25,12 @@ namespace DAL
             int sensorEnd = json.IndexOf("]", sensorBegin);
 
             string appartments = json.Substring(appartmentBegin, appartmentEnd-appartmentBegin+1);
-            List<Appartment> appList = JsonConvert.DeserializeObject<List<Appartment>>(appartments);
+            ICollection<Appartment> appList = JsonConvert.DeserializeObject<ICollection<Appartment>>(appartments);
             int len = json.Length;
             string sensors = json.Substring(sensorBegin, sensorEnd-sensorBegin+1);
-            List<Sensor> senList = JsonConvert.DeserializeObject<List<Sensor>>(sensors);
+            ICollection<Sensor> senList = JsonConvert.DeserializeObject<ICollection<Sensor>>(sensors);
 
-            return new Tuple<List<Appartment>, List<Sensor>>(appList, senList);
+            return new Tuple<ICollection<Appartment>, ICollection<Sensor>>(appList, senList);
 
         }
 
