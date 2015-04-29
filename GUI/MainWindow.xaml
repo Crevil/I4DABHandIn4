@@ -42,8 +42,7 @@
                  Grid.Column="2"
                  Margin="10">
         </ListBox>
-
-        <oxy:Plot Grid.Column="4" x:Name="GraphPlot" Title="Test" Model="{Binding Graph.PlotModel, Mode=TwoWay}" Margin="10">
-        </oxy:Plot>
+        
+        <ContentControl x:Name="GraphPlot" Content="{Binding Plot}" Grid.Column="4"/>
     </Grid>
 </Window>
