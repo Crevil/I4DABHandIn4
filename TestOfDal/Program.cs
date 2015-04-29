@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using DAL;
 using DAL.Entities;
+using DAL.Repository;
 using Newtonsoft.Json;
 
 namespace TestOfDal
@@ -15,20 +16,9 @@ namespace TestOfDal
     {
         private static void Main(string[] args)
         {
-            var context = new Context();
-            var appRepos = new Repository<Appartment>(context);
-            var sensorRepos = new Repository<Sensor>(context);
-            var measureRepos = new Repository<Measurement>(context);
+            var db = new DbRepository();
+            var read = db.AppartmentWithMeasurements();
 
-            var apptest = new Appartment(1, 1, 1);
-            var sensortest = new Sensor { Description = "John"};
-            var testMeasurement = new Measurement(1,"timestamp",sensortest,apptest);
-
-            appRepos.Add(apptest).Wait();
-            sensorRepos.Add(sensortest).Wait();
-            measureRepos.Add(testMeasurement).Wait();
-
-            var read = appRepos.FindWithInclude(a=> a.AppartmentId == 13 , m => m.Measurements).Result;
             /*JSONDeserialisator ser = new JSONDeserialisator();
 
             string begin = "http://userportal.iha.dk/~jrt/i4dab/E14/HandIn4/dataGDL/data/";
