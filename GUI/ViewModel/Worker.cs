@@ -106,6 +106,7 @@ namespace GUI.ViewModel
             while (_count < _max)
             {
                 _count++;
+                if (_count == 8) _count++;
 
                 Repository.AddCollectionOfMeasurements(GDL.LoadJson(_count));
 
@@ -129,6 +130,8 @@ namespace GUI.ViewModel
             _progress.Max = _max;
             _count = _progress.Current;
             _count++;
+
+            if (_count == 8) _count++;
 
             Task.Run(() => Repository.AddCollectionOfMeasurements(GDL.LoadJson(_count)));
 
