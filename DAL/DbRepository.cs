@@ -20,7 +20,12 @@ namespace DAL
 
         public DbRepository()
         {
+                
             _context = new Context();
+            _context.Database.ExecuteSqlCommand("TRUNCATE TABLE Measurements");
+            _context.Database.ExecuteSqlCommand("DELETE FROM Sensors");
+            _context.Database.ExecuteSqlCommand("DELETE FROM Appartments");
+            _context.Database.ExecuteSqlCommand("TRUNCATE TABLE Logs");
             _appartmentRepos = new Repository<Appartment>(_context);
             _sensorRepos = new Repository<Sensor>(_context);
             _measureRepos = new Repository<Measurement>(_context);

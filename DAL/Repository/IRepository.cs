@@ -22,6 +22,5 @@ namespace DAL.Repository
         Task<ICollection<T>> FindAllDoubleWhere(Expression<Func<T, bool>> exp1, Expression<Func<T, bool>> exp2);
         Task<T> FindWithInclude(Expression<Func<T, object>> include, Expression<Func<T, bool>> expression);
         Task<ICollection<T>> FindAllWithInclude(Expression<Func<T, object>> include, Expression<Func<T, bool>> expression);
-
     }
 }
