@@ -20,7 +20,6 @@ namespace GUI.ViewModel
     {
         private GDL _gdl;
         private int max = 11803;
-       
 
         public Commands Commands { get; set; }
         public Progress Progress { get; set; }
@@ -32,7 +31,7 @@ namespace GUI.ViewModel
 
             _gdl = gdl;
 
-            Commands = new Commands();
+            Commands = new Commands(_gdl);
 
             // Initialisere progress class og workeren
             Progress = new Progress(0, max);
@@ -41,13 +40,27 @@ namespace GUI.ViewModel
             Appartments = new ObservableCollection<Appartment>(gdl.GetAppartments());
             Sensors = new ObservableCollection<Sensor>(_gdl.GetSensors()); // List of sensors on GUI
 
+            UpdateSensorTypes();
+
+            // Setup selection event handler
+            _selectedAppartments.CollectionChanged += (sender, e) => SelectionChanged();
+
+            _gdl.OriginalLoaded += (sender, e) => UploadOriginalData();
+        }
+
+        private void UploadOriginalData()
+        {
+            Sensors = new ObservableCollection<Sensor>(_gdl.GetSensors());
+            Appartments = new ObservableCollection<Appartment>(_gdl.GetAppartments());
+            UpdateSensorTypes();        
+        }
+
+        private void UpdateSensorTypes()
+        {
             SensorTypes = new ObservableCollection<string>();
 
             foreach (var s in Sensors.GroupBy(g => g.Description))// List of sensortypes on GUI
                 SensorTypes.Add(s.Key);
-
-            // Setup selection event handler
-            _selectedAppartments.CollectionChanged += (sender, e) => SelectionChanged();
         }
 
         #region Appartment handling

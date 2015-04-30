@@ -20,6 +20,7 @@ namespace GUI.ViewModel
     public class Commands : INotifyPropertyChanged
     {
         public Worker Worker { get; set; }
+        private GDL _gdl;
 
         private string _liveButtonContent;
         public string LiveButtonContent
@@ -36,10 +37,11 @@ namespace GUI.ViewModel
         private const string liveButtonTextNotRunning = "Read Live";
         private const string liveButtonTextRunning = "Cancel";
 
-        public Commands()
+        public Commands(GDL gdl)
         {
             StaticButtonEnabled = true;
             LiveButtonContent = "Read Live";
+            _gdl = gdl;
         }
 
         private bool _staticButtonEnabled;
@@ -79,7 +81,7 @@ namespace GUI.ViewModel
             StaticButtonEnabled = false;
             ThreadPool.QueueUserWorkItem(delegate
             {
-                GDL.LoadOriginal();
+                _gdl.LoadOriginal();
             });
 
         }
