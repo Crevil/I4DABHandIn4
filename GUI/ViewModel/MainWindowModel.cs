@@ -16,18 +16,17 @@ using OxyPlot.Wpf;
 
 namespace GUI.ViewModel
 {
-{
     public class MainWindowModel : INotifyPropertyChanged
     {
         private GDL _gdl;
         private int max = 11803;
-        public MainWindowModel([NotNull] GDL gdl)
+       
 
         public Commands Commands { get; set; }
         public Progress Progress { get; set; }
 
 
-        public MainWindowModel()
+        public MainWindowModel([NotNull] GDL gdl)
         {
             if (gdl == null) throw new ArgumentNullException("gdl");
 
@@ -37,7 +36,7 @@ namespace GUI.ViewModel
 
             // Initialisere progress class og workeren
             Progress = new Progress(0, max);
-            Commands.Worker = new Worker(Progress);
+            Commands.Worker = new Worker(Progress, Graph);
 
             Appartments = new ObservableCollection<Appartment>(gdl.GetAppartments());
             Sensors = new ObservableCollection<Sensor>(_gdl.GetSensors()); // List of sensors on GUI
