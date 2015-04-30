@@ -20,16 +20,20 @@ namespace DAL
 
         public DbRepository()
         {
+                
             _context = new Context();
+            _context.Database.ExecuteSqlCommand("TRUNCATE TABLE Measurements");
+            _context.Database.ExecuteSqlCommand("DELETE FROM Sensors");
+            _context.Database.ExecuteSqlCommand("DELETE FROM Appartments");
+            _context.Database.ExecuteSqlCommand("TRUNCATE TABLE Logs");
+            _context.Database.ExecuteSqlCommand("DBCC CHECKIDENT (Sensors, RESEED, 0)");
+            _context.Database.ExecuteSqlCommand("DBCC CHECKIDENT (Appartments, RESEED, 0)");
             _appartmentRepos = new Repository<Appartment>(_context);
             _sensorRepos = new Repository<Sensor>(_context);
             _measureRepos = new Repository<Measurement>(_context);
             Appartments = new List<Appartment>();
             Sensors = new List<Sensor>();
             Measurements = new List<Measurement>();
-            _appartmentRepos.DeleteAll();
-            _sensorRepos.DeleteAll();
-            _measureRepos.DeleteAll();
         }
 
         public ICollection<Measurement> GetMeasurements(ICollection<Appartment> appartments, string sensorType)
@@ -38,8 +42,13 @@ namespace DAL
 
             foreach (var appartment in appartments)
             {
-                returnList.AddRange(_measureRepos.FindAllDoubleWhere(m => m.AppartmentId == appartment.AppartmentId,
-                    m => m.Sensor.Description == sensorType).Result.ToList());
+                returnList.AddRange(
+                    _measureRepos
+                    .FindAllDoubleWhere(
+                        m => m.AppartmentId == appartment.AppartmentId,
+                        m => m.Sensor.Description == sensorType)
+                    .Result.ToList()
+                );
             }
             return returnList;
         }

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using DAL;
 using DAL.Entities;
 
@@ -17,8 +19,8 @@ namespace GUI.Model
 
             Tuple<ICollection<Appartment>, ICollection<Sensor>> t = JSONDeserialisator.DeserialiseOriginalFile(StringDownloader.DownloadStringFromURL(originalUrl));
 
-            repository.AddCollectionOfAppartments(t.Item1);
-            repository.AddCollectionOfSensors(t.Item2);
+            repository.AddCollectionOfAppartments(t.Item1).Wait();
+            repository.AddCollectionOfSensors(t.Item2).Wait();
 
             if (OriginalLoaded != null)
                 OriginalLoaded(this, new EventArgs());
@@ -39,10 +41,10 @@ namespace GUI.Model
         /// <returns></returns>
         public ICollection<Measurement> GetMeasurements(ICollection<Appartment> appartments, string sensorType )
         {
-            return repository.GetMeasurements(appartments, sensorType);
-
-            // Dummy
-            // Create random measurements for appartments
+            var r = repository.GetMeasurements(appartments, sensorType);
+            return r;
+            //// Dummy
+            //// Create random measurements for appartments
             //var r = new Random();
 
             //var list = new List<Measurement>();
