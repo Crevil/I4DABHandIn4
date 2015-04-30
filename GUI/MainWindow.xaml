@@ -4,7 +4,11 @@
         xmlns:oxy="http://oxyplot.org/wpf"
         xmlns:d="clr-namespace:GUI.ViewModel"
         xmlns:multiSelection="clr-namespace:GUI.ViewModel.MultiSelection"
+        xmlns:converters="clr-namespace:GUI.ViewModel.Converters"
         Title="Grundfos Dormitory Lab" Height="486.397" Width="728.309">
+    <Window.Resources>
+        <converters:AppartmentToStringConverter x:Key="AppartmentToStringConverter" />
+    </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"></ColumnDefinition>
@@ -18,7 +22,7 @@
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
-
+        
         <GridSplitter Grid.Column="1"
                       Grid.Row="0"
                       Grid.RowSpan="2"
@@ -36,12 +40,18 @@
         <ListBox x:Name="AppartmentListBox" 
                  ItemsSource="{Binding Appartments}"
                  multiSelection:MultiSelectorBehaviours.SynchronizedSelectedItems="{Binding SelectedAppartments}" 
-                 DisplayMemberPath="AppartmentId"
                  SelectionMode="Multiple"
                  Grid.Column="0"
                  Grid.Row="0"
                  Grid.RowSpan="2"
                  Margin="10">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Converter={StaticResource AppartmentToStringConverter}}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
         </ListBox>
 
         <ListBox x:Name="SensorListBox"
