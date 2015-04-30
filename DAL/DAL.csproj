@@ -75,6 +75,10 @@
     <Compile Include="Migrations\201504292100398_AddedLog.Designer.cs">
       <DependentUpon>201504292100398_AddedLog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201504300859330_NumberToNo.cs" />
+    <Compile Include="Migrations\201504300859330_NumberToNo.Designer.cs">
+      <DependentUpon>201504300859330_NumberToNo.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\IRepository.cs" />
@@ -97,6 +101,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201504292100398_AddedLog.resx">
       <DependentUpon>201504292100398_AddedLog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201504300859330_NumberToNo.resx">
+      <DependentUpon>201504300859330_NumberToNo.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />
