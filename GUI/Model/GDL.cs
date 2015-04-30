@@ -114,12 +114,6 @@ namespace GUI.Model
                 new Sensor {SensorId = 4, Description = "Power"}
             };
         }
-         public ICollection<Measurement> GetMeasurements(ICollection<Appartment> appartments, Sensor sensor )
-         {
-             return null;
-
-             // WHAT IS THIS CRAP??
-         }
     }
 
 
