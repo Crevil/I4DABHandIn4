@@ -1,15 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Globalization;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Timers;
 using DAL;
 using DAL.Entities;
-
 
 namespace GUI.Model
 {
@@ -47,33 +39,30 @@ namespace GUI.Model
         /// <returns></returns>
         public ICollection<Measurement> GetMeasurements(ICollection<Appartment> appartments, string sensorType )
         {
-            // Get sensors of this type in the appartments
-            
-            // Get measurements from the appartments and sensors
-
+            return repository.GetMeasurements(appartments, sensorType);
 
             // Dummy
             // Create random measurements for appartments
-            var r = new Random();
+            //var r = new Random();
 
-            var list = new List<Measurement>();
+            //var list = new List<Measurement>();
 
-            for (var i = 0; i < appartments.Count; i++) // For each appartment
-            {
-                for (var j = 0; j < 5; j++) // Create 5 measurements
-                {
-                    list.Add(
-                        new Measurement
-                        {
-                            Timestamp =
-                                TimeHelpers.ConvertToUnixTimestamp(DateTime.Now.AddSeconds(j * -5)).ToString(CultureInfo.CurrentCulture),
-                            Value = r.Next(0, 20),
-                            AppartmentId = appartments.ElementAt(i).AppartmentId
-                        });
-                }
-            }
+            //for (var i = 0; i < appartments.Count; i++) // For each appartment
+            //{
+            //    for (var j = 0; j < 5; j++) // Create 5 measurements
+            //    {
+            //        list.Add(
+            //            new Measurement
+            //            {
+            //                Timestamp =
+            //                    TimeHelpers.ConvertToUnixTimestamp(DateTime.Now.AddSeconds(j * -5)).ToString(CultureInfo.CurrentCulture),
+            //                Value = r.Next(0, 20),
+            //                AppartmentId = appartments.ElementAt(i).AppartmentId
+            //            });
+            //    }
+            //}
 
-            return list;
+            //return list;
         }
 
         /// <summary>
@@ -82,26 +71,27 @@ namespace GUI.Model
         /// <returns>Collection of appartments</returns>
         public ICollection<Appartment> GetAppartments()
         {
-            return new List<Appartment>
-            {
-                new Appartment
-                {
-                    AppartmentId = 1,
-                    Floor = 0,
-                    Number = 1
-                },
-                new Appartment {
-                    AppartmentId = 2,
-                    Floor = 2,
-                    Number = 1,
-                },
-                new Appartment
-                {
-                    AppartmentId = 3,
-                    Floor = 2,
-                    Number = 4
-                }
-            };
+            return repository.Appartments;
+            //return new List<Appartment>
+            //{
+            //    new Appartment
+            //    {
+            //        AppartmentId = 1,
+            //        Floor = 0,
+            //        Number = 1
+            //    },
+            //    new Appartment {
+            //        AppartmentId = 2,
+            //        Floor = 2,
+            //        Number = 1,
+            //    },
+            //    new Appartment
+            //    {
+            //        AppartmentId = 3,
+            //        Floor = 2,
+            //        Number = 4
+            //    }
+            //};
         }
 
         /// <summary>
@@ -110,13 +100,15 @@ namespace GUI.Model
         /// <returns>Collection of sensors</returns>
         public ICollection<Sensor> GetSensors()
         {
-            return new List<Sensor>
-            {
-                new Sensor {SensorId = 1, Description = "Temperature"},
-                new Sensor {SensorId = 2, Description = "Humidity"},
-                new Sensor {SensorId = 3, Description = "Power"},
-                new Sensor {SensorId = 4, Description = "Power"}
-            };
+            return repository.Sensors;
+
+            //return new List<Sensor>
+            //{
+            //    new Sensor {SensorId = 1, Description = "Temperature"},
+            //    new Sensor {SensorId = 2, Description = "Humidity"},
+            //    new Sensor {SensorId = 3, Description = "Power"},
+            //    new Sensor {SensorId = 4, Description = "Power"}
+            //};
         }
     }
 
