@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using DAL;
 using DAL.Entities;
 
@@ -14,9 +15,11 @@ namespace GUI.Model
 {
     public class GDL
     {
-        static private DbRepository repository = new DbRepository();
+        private DbRepository repository = new DbRepository();
 
-        static public void LoadOriginal()
+        public event EventHandler OriginalLoaded;
+
+        public void LoadOriginal()
         {
             string originalUrl = "http://userportal.iha.dk/~jrt/i4dab/E14/HandIn4/GFKSC002_original.txt";
 
@@ -25,7 +28,8 @@ namespace GUI.Model
             repository.AddCollectionOfAppartments(t.Item1);
             repository.AddCollectionOfSensors(t.Item2);
 
-            // CALL VIEW UPDATE 
+            if (OriginalLoaded != null)
+                OriginalLoaded(this, new EventArgs());
         }
 
         static public ICollection<Measurement> LoadJson(int nr)
