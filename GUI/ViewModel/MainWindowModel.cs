@@ -151,7 +151,8 @@ namespace GUI.ViewModel
             if ((SelectedAppartments.Count <= 0 || SelectedSensorType == null) && Graph != null )
                 return;
 
-            var measurements = _gdl.GetMeasurements(SelectedAppartments, SelectedSensorType);
+            var measurementFuture = Task.Run(() =>_gdl.GetMeasurements(SelectedAppartments, SelectedSensorType));
+            var measurements = measurementFuture.Result;
             // This might be done better! Breaking OCP
             IGraphType type;
             switch (SelectedSensorType)

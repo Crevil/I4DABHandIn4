@@ -41,30 +41,30 @@ namespace GUI.Model
         /// <returns></returns>
         public ICollection<Measurement> GetMeasurements(ICollection<Appartment> appartments, string sensorType )
         {
-            //var r =  repository.GetMeasurements(appartments, sensorType);
-            //return r;
-            // Dummy
-            // Create random measurements for appartments
-            var r = new Random();
+            var r = repository.GetMeasurements(appartments, sensorType);
+            return r;
+            //// Dummy
+            //// Create random measurements for appartments
+            //var r = new Random();
 
-            var list = new List<Measurement>();
+            //var list = new List<Measurement>();
 
-            for (var i = 0; i < appartments.Count; i++) // For each appartment
-            {
-                for (var j = 0; j < 5; j++) // Create 5 measurements
-                {
-                    list.Add(
-                        new Measurement
-                        {
-                            Timestamp =
-                                TimeHelpers.ConvertToUnixTimestamp(DateTime.Now.AddSeconds(j * -5)).ToString(CultureInfo.CurrentCulture),
-                            Value = r.Next(0, 20),
-                            AppartmentId = appartments.ElementAt(i).AppartmentId
-                        });
-                }
-            }
+            //for (var i = 0; i < appartments.Count; i++) // For each appartment
+            //{
+            //    for (var j = 0; j < 5; j++) // Create 5 measurements
+            //    {
+            //        list.Add(
+            //            new Measurement
+            //            {
+            //                Timestamp =
+            //                    TimeHelpers.ConvertToUnixTimestamp(DateTime.Now.AddSeconds(j * -5)).ToString(CultureInfo.CurrentCulture),
+            //                Value = r.Next(0, 20),
+            //                AppartmentId = appartments.ElementAt(i).AppartmentId
+            //            });
+            //    }
+            //}
 
-            return list;
+            //return list;
         }
 
         /// <summary>
