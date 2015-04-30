@@ -79,6 +79,14 @@
     <Compile Include="Migrations\201504300859330_NumberToNo.Designer.cs">
       <DependentUpon>201504300859330_NumberToNo.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201504300937244_SensorId Not DatabaseGenerated.cs" />
+    <Compile Include="Migrations\201504300937244_SensorId Not DatabaseGenerated.Designer.cs">
+      <DependentUpon>201504300937244_SensorId Not DatabaseGenerated.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201504300948126_Key and GeneratedOption.None.cs" />
+    <Compile Include="Migrations\201504300948126_Key and GeneratedOption.None.Designer.cs">
+      <DependentUpon>201504300948126_Key and GeneratedOption.None.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\IRepository.cs" />
@@ -104,6 +112,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201504300859330_NumberToNo.resx">
       <DependentUpon>201504300859330_NumberToNo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201504300937244_SensorId Not DatabaseGenerated.resx">
+      <DependentUpon>201504300937244_SensorId Not DatabaseGenerated.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201504300948126_Key and GeneratedOption.None.resx">
+      <DependentUpon>201504300948126_Key and GeneratedOption.None.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />

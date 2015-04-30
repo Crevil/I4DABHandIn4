@@ -28,6 +28,7 @@ namespace DAL
             _context.Database.ExecuteSqlCommand("TRUNCATE TABLE Logs");
             _context.Database.ExecuteSqlCommand("DBCC CHECKIDENT (Sensors, RESEED, 0)");
             _context.Database.ExecuteSqlCommand("DBCC CHECKIDENT (Appartments, RESEED, 0)");
+
             _appartmentRepos = new Repository<Appartment>(_context);
             _sensorRepos = new Repository<Sensor>(_context);
             _measureRepos = new Repository<Measurement>(_context);

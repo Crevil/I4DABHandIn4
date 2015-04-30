@@ -1,10 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DAL.Entities
 {
     public class Sensor
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int SensorId { get; set; }
         public string CalibrationCoeff { get; set; }
         public string Description { get; set; }
