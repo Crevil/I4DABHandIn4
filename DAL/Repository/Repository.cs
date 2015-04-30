@@ -49,6 +49,11 @@ namespace DAL.Repository
             return await _context.SaveChangesAsync();
         }
 
+        public void DeleteAll()
+        {
+            _context.Database.Delete();
+        }
+
         public async Task<int> Count()
         {
             return await _context.Set<T>().CountAsync();

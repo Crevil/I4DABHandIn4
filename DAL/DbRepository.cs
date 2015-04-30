@@ -27,6 +27,9 @@ namespace DAL
             Appartments = new List<Appartment>();
             Sensors = new List<Sensor>();
             Measurements = new List<Measurement>();
+            _appartmentRepos.DeleteAll();
+            _sensorRepos.DeleteAll();
+            _measureRepos.DeleteAll();
         }
 
         public ICollection<Measurement> GetMeasurements(ICollection<Appartment> appartments, string sensorType)
