@@ -26,6 +26,18 @@ namespace DAL
             _measureRepos = new Repository<Measurement>(_context);
         }
 
+        public ICollection<Measurement> GetMeasurements(ICollection<Appartment> appartments, string sensorType)
+        {
+            List<Measurement> returnList = new List<Measurement>();
+
+            foreach (var appartment in appartments)
+            {
+                returnList.AddRange(_measureRepos.FindAllDoubleWhere(m => m.AppartmentId == appartment.AppartmentId,
+                    m => m.Sensor.Description == sensorType).Result.ToList());
+            }
+            return returnList;
+        }
+
         public Appartment AppartmentWithMeasurements(int id)
         {
             return _appartmentRepos.FindWithInclude(m => m.Measurements.Select(s => s.Sensor), a => a.AppartmentId == id).Result;
