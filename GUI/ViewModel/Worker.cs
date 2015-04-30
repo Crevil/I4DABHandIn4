@@ -30,9 +30,9 @@ namespace GUI.ViewModel
 
         public event SCM.AsyncCompletedEventHandler AsyncCompleted;
 
-        public Worker(Progress p, Graph.Graph graph)
+        public Worker(Progress p, Graph.Graph graph, DbRepository repository)
         {
-            Repository = new DbRepository();
+            Repository = repository;
             _progress = p;
 
             if (backgroundWorker != null)
@@ -107,7 +107,7 @@ namespace GUI.ViewModel
             {
                 _count++;
 
-                Task t = Repository.AddCollectionOfMeasurements(GDL.LoadJson(_count));
+                Repository.AddCollectionOfMeasurements(GDL.LoadJson(_count));
 
                 // UPDATE VIEW MODEL!
 
@@ -118,7 +118,7 @@ namespace GUI.ViewModel
                 }
 
                 backgroundWorker.ReportProgress(_count);
-                Thread.Sleep(1000);
+                Thread.Sleep(5000);
             }
 
         }
@@ -130,7 +130,8 @@ namespace GUI.ViewModel
             _count = _progress.Current;
             _count++;
 
-            Task t = Repository.AddCollectionOfMeasurements(GDL.LoadJson(_count));
+            Task.Run(() => Repository.AddCollectionOfMeasurements(GDL.LoadJson(_count)));
+
             // UPDATE VIEW MODEL!
             
             backgroundWorker.ReportProgress(_count);

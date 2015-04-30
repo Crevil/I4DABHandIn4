@@ -59,33 +59,13 @@
     <Compile Include="Entities\Appartment.cs" />
     <Compile Include="Entities\Measurement.cs" />
     <Compile Include="Entities\Sensor.cs" />
-    <Compile Include="Migrations\201504232135380_AddedModelBuilder.cs" />
-    <Compile Include="Migrations\201504232135380_AddedModelBuilder.Designer.cs">
-      <DependentUpon>201504232135380_AddedModelBuilder.cs</DependentUpon>
+    <Compile Include="Migrations\201504301058238_New db.cs" />
+    <Compile Include="Migrations\201504301058238_New db.Designer.cs">
+      <DependentUpon>201504301058238_New db.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201504272015154_ChangedTypesAndNames.cs" />
-    <Compile Include="Migrations\201504272015154_ChangedTypesAndNames.Designer.cs">
-      <DependentUpon>201504272015154_ChangedTypesAndNames.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201504292028201_AddedMapToStoredProcedures.cs" />
-    <Compile Include="Migrations\201504292028201_AddedMapToStoredProcedures.Designer.cs">
-      <DependentUpon>201504292028201_AddedMapToStoredProcedures.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201504292100398_AddedLog.cs" />
-    <Compile Include="Migrations\201504292100398_AddedLog.Designer.cs">
-      <DependentUpon>201504292100398_AddedLog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201504300859330_NumberToNo.cs" />
-    <Compile Include="Migrations\201504300859330_NumberToNo.Designer.cs">
-      <DependentUpon>201504300859330_NumberToNo.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201504300937244_SensorId Not DatabaseGenerated.cs" />
-    <Compile Include="Migrations\201504300937244_SensorId Not DatabaseGenerated.Designer.cs">
-      <DependentUpon>201504300937244_SensorId Not DatabaseGenerated.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201504300948126_Key and GeneratedOption.None.cs" />
-    <Compile Include="Migrations\201504300948126_Key and GeneratedOption.None.Designer.cs">
-      <DependentUpon>201504300948126_Key and GeneratedOption.None.cs</DependentUpon>
+    <Compile Include="Migrations\201504301218406_Changed pk in Measurement.cs" />
+    <Compile Include="Migrations\201504301218406_Changed pk in Measurement.Designer.cs">
+      <DependentUpon>201504301218406_Changed pk in Measurement.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -98,29 +78,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201504232135380_AddedModelBuilder.resx">
-      <DependentUpon>201504232135380_AddedModelBuilder.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201504301058238_New db.resx">
+      <DependentUpon>201504301058238_New db.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201504272015154_ChangedTypesAndNames.resx">
-      <DependentUpon>201504272015154_ChangedTypesAndNames.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201504292028201_AddedMapToStoredProcedures.resx">
-      <DependentUpon>201504292028201_AddedMapToStoredProcedures.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201504292100398_AddedLog.resx">
-      <DependentUpon>201504292100398_AddedLog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201504300859330_NumberToNo.resx">
-      <DependentUpon>201504300859330_NumberToNo.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201504300937244_SensorId Not DatabaseGenerated.resx">
-      <DependentUpon>201504300937244_SensorId Not DatabaseGenerated.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201504300948126_Key and GeneratedOption.None.resx">
-      <DependentUpon>201504300948126_Key and GeneratedOption.None.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201504301218406_Changed pk in Measurement.resx">
+      <DependentUpon>201504301218406_Changed pk in Measurement.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

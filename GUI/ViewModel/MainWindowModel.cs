@@ -1,22 +1,15 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
 using DAL;
 using DAL.Entities;
 using GUI.Annotations;
 using GUI.Model;
 using GUI.ViewModel.Graph;
 using GUI.ViewModel.Graph.Types;
-using GUI.ViewModel.MultiSelection;
-using OxyPlot.Wpf;
 
 namespace GUI.ViewModel
 {
@@ -24,21 +17,24 @@ namespace GUI.ViewModel
     {
         private GDL _gdl;
         private int max = 11803;
+        private DbRepository _repository;
 
         public Commands Commands { get; set; }
         public Progress Progress { get; set; }
 
-        public MainWindowModel([NotNull] GDL gdl)
+        public MainWindowModel([NotNull] GDL gdl, DbRepository repository)
         {
             if (gdl == null) throw new ArgumentNullException("gdl");
 
             _gdl = gdl;
 
+
+            _repository = repository;
             Commands = new Commands(_gdl);
 
             // Initialisere progress class og workeren
             Progress = new Progress(0, max);
-            Commands.Worker = new Worker(Progress, Graph);
+            Commands.Worker = new Worker(Progress, Graph, _repository);
 
             Appartments = new ObservableCollection<Appartment>(gdl.GetAppartments());
             Sensors = new ObservableCollection<Sensor>(_gdl.GetSensors()); // List of sensors on GUI

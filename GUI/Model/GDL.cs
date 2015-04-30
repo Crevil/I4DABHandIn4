@@ -9,9 +9,14 @@ namespace GUI.Model
 {
     public class GDL
     {
-        private DbRepository repository = new DbRepository();
+        private DbRepository _repository;
 
         public event EventHandler OriginalLoaded;
+
+        public GDL(DbRepository repository)
+        {
+            _repository = repository;
+        }
 
         public void LoadOriginal()
         {
@@ -19,8 +24,8 @@ namespace GUI.Model
 
             Tuple<ICollection<Appartment>, ICollection<Sensor>> t = JSONDeserialisator.DeserialiseOriginalFile(StringDownloader.DownloadStringFromURL(originalUrl));
 
-            repository.AddCollectionOfAppartments(t.Item1).Wait();
-            repository.AddCollectionOfSensors(t.Item2).Wait();
+            _repository.AddCollectionOfAppartments(t.Item1).Wait();
+            _repository.AddCollectionOfSensors(t.Item2).Wait();
 
             if (OriginalLoaded != null)
                 OriginalLoaded(this, new EventArgs());
@@ -41,30 +46,8 @@ namespace GUI.Model
         /// <returns></returns>
         public ICollection<Measurement> GetMeasurements(ICollection<Appartment> appartments, string sensorType )
         {
-            var r = repository.GetMeasurements(appartments, sensorType);
+            var r = _repository.GetMeasurements(appartments, sensorType);
             return r;
-            //// Dummy
-            //// Create random measurements for appartments
-            //var r = new Random();
-
-            //var list = new List<Measurement>();
-
-            //for (var i = 0; i < appartments.Count; i++) // For each appartment
-            //{
-            //    for (var j = 0; j < 5; j++) // Create 5 measurements
-            //    {
-            //        list.Add(
-            //            new Measurement
-            //            {
-            //                Timestamp =
-            //                    TimeHelpers.ConvertToUnixTimestamp(DateTime.Now.AddSeconds(j * -5)).ToString(CultureInfo.CurrentCulture),
-            //                Value = r.Next(0, 20),
-            //                AppartmentId = appartments.ElementAt(i).AppartmentId
-            //            });
-            //    }
-            //}
-
-            //return list;
         }
 
         /// <summary>
@@ -73,27 +56,7 @@ namespace GUI.Model
         /// <returns>Collection of appartments</returns>
         public ICollection<Appartment> GetAppartments()
         {
-            return repository.Appartments;
-            //return new List<Appartment>
-            //{
-            //    new Appartment
-            //    {
-            //        AppartmentId = 1,
-            //        Floor = 0,
-            //        Number = 1
-            //    },
-            //    new Appartment {
-            //        AppartmentId = 2,
-            //        Floor = 2,
-            //        Number = 1,
-            //    },
-            //    new Appartment
-            //    {
-            //        AppartmentId = 3,
-            //        Floor = 2,
-            //        Number = 4
-            //    }
-            //};
+            return _repository.Appartments;
         }
 
         /// <summary>
@@ -102,15 +65,7 @@ namespace GUI.Model
         /// <returns>Collection of sensors</returns>
         public ICollection<Sensor> GetSensors()
         {
-            return repository.Sensors;
-
-            //return new List<Sensor>
-            //{
-            //    new Sensor {SensorId = 1, Description = "Temperature"},
-            //    new Sensor {SensorId = 2, Description = "Humidity"},
-            //    new Sensor {SensorId = 3, Description = "Power"},
-            //    new Sensor {SensorId = 4, Description = "Power"}
-            //};
+            return _repository.Sensors;
         }
     }
 

@@ -101,11 +101,7 @@ namespace GUI.ViewModel.Graph.Types
                     lineSerie.Points.Add
                         (
                             new DataPoint(
-                                Axis.ToDouble(
-                                    TimeHelpers.ConvertFromUnixTimestamp(
-                                        double.Parse(d.Timestamp, CultureInfo.CurrentCulture)
-                                        )
-                                    ),
+                                Axis.ToDouble(d.Value),
                                 d.Value
                                 )
                         )

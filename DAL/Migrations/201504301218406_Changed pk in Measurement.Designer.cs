@@ -7,13 +7,13 @@ namespace DAL.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class ChangedTypesAndNames : IMigrationMetadata
+    public sealed partial class ChangedpkinMeasurement : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(ChangedTypesAndNames));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(ChangedpkinMeasurement));
         
         string IMigrationMetadata.Id
         {
-            get { return "201504272015154_ChangedTypesAndNames"; }
+            get { return "201504301218406_Changed pk in Measurement"; }
         }
         
         string IMigrationMetadata.Source

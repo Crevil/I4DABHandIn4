@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using DAL;
 using GUI.Model;
 using GUI.ViewModel;
 using OxyPlot.Wpf;
@@ -25,8 +26,10 @@ namespace GUI
 
             InitializeComponent();
 
-            var gdl = new GDL();
-            _viewModel = new MainWindowModel(gdl);
+            var repository = new DbRepository();
+
+            var gdl = new GDL(repository);
+            _viewModel = new MainWindowModel(gdl, repository);
             DataContext = _viewModel;
 
         }

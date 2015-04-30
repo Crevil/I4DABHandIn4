@@ -23,7 +23,7 @@ namespace DAL
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Measurement>().HasKey(m => new {m.AppartmentId, m.SensorId});
+            modelBuilder.Entity<Measurement>().HasKey(m => new {m.SensorId, m.Timestamp});
 
             modelBuilder.Entity<Measurement>()
                 .HasRequired(m => m.Appartment);
@@ -32,7 +32,7 @@ namespace DAL
                 .HasRequired(m => m.Sensor);
 
             modelBuilder.Entity<Appartment>().MapToStoredProcedures();
-            modelBuilder.Entity<Sensor>().MapToStoredProcedures();
+            modelBuilder.Entity<Sensor>();
             modelBuilder.Entity<Measurement>().MapToStoredProcedures();
         }
     }

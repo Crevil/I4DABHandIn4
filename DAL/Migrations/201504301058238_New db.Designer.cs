@@ -7,13 +7,13 @@ namespace DAL.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class SensorIdNotDatabaseGenerated : IMigrationMetadata
+    public sealed partial class Newdb : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(SensorIdNotDatabaseGenerated));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Newdb));
         
         string IMigrationMetadata.Id
         {
-            get { return "201504300937244_SensorId Not DatabaseGenerated"; }
+            get { return "201504301058238_New db"; }
         }
         
         string IMigrationMetadata.Source

@@ -16,7 +16,6 @@ namespace DAL
         private IRepository<Measurement> _measureRepos;
         public ICollection<Appartment> Appartments { get; set; }
         public ICollection<Sensor> Sensors { get; set; }
-        public ICollection<Measurement> Measurements { get; set; }
 
         public DbRepository()
         {
@@ -34,7 +33,6 @@ namespace DAL
             _measureRepos = new Repository<Measurement>(_context);
             Appartments = new List<Appartment>();
             Sensors = new List<Sensor>();
-            Measurements = new List<Measurement>();
         }
 
         public ICollection<Measurement> GetMeasurements(ICollection<Appartment> appartments, string sensorType)
@@ -71,10 +69,9 @@ namespace DAL
             Sensors = _sensorRepos.GetAll().Result;
         }
 
-        public async Task AddCollectionOfMeasurements(ICollection<Measurement> measurements)
+        public void AddCollectionOfMeasurements(ICollection<Measurement> measurements)
         {
-            await _measureRepos.AddCollection(measurements);
-            Measurements = _measureRepos.GetAll().Result;
+             _measureRepos.AddCollection(measurements).Wait();
         }
     }
 }

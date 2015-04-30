@@ -8,7 +8,7 @@ namespace DAL.Entities
     public class Sensor
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int Id { get; set; }
         public int SensorId { get; set; }
         public string CalibrationCoeff { get; set; }
         public string Description { get; set; }

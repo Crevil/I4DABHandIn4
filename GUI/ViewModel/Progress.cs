@@ -40,7 +40,7 @@ namespace GUI.ViewModel
             _max = max;
         }
 
-        public new event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
         private void NotifyPropertyChanged([CallerMemberName] string propertyName = null)
         {
             var handler = PropertyChanged;
