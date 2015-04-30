@@ -24,6 +24,9 @@ namespace DAL
             _appartmentRepos = new Repository<Appartment>(_context);
             _sensorRepos = new Repository<Sensor>(_context);
             _measureRepos = new Repository<Measurement>(_context);
+            Appartments = new List<Appartment>();
+            Sensors = new List<Sensor>();
+            Measurements = new List<Measurement>();
         }
 
         public ICollection<Measurement> GetMeasurements(ICollection<Appartment> appartments, string sensorType)
