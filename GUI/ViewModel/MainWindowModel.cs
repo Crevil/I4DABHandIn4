@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using DAL;
@@ -23,7 +27,6 @@ namespace GUI.ViewModel
 
         public Commands Commands { get; set; }
         public Progress Progress { get; set; }
-
 
         public MainWindowModel([NotNull] GDL gdl)
         {
@@ -50,21 +53,33 @@ namespace GUI.ViewModel
 
         private void UploadOriginalData()
         {
-            Sensors = new ObservableCollection<Sensor>(_gdl.GetSensors());
-            Appartments = new ObservableCollection<Appartment>(_gdl.GetAppartments());
-            UpdateSensorTypes();        
+            var sensorFuture = Task.Run(() => _gdl.GetSensors());
+            sensorFuture.ContinueWith(s => UpdateSensorTypes());
+            var appartmentFuture = Task.Run(() => _gdl.GetAppartments());
+
+            Sensors = new ObservableCollection<Sensor>(sensorFuture.Result);
+
+            Appartments = new ObservableCollection<Appartment>(appartmentFuture.Result);
         }
 
         private void UpdateSensorTypes()
         {
-            SensorTypes = new ObservableCollection<string>();
+            var types = new ObservableCollection<string>();
 
             foreach (var s in Sensors.GroupBy(g => g.Description))// List of sensortypes on GUI
-                SensorTypes.Add(s.Key);
+                types.Add(s.Key);
+
+            SensorTypes = types;
         }
 
         #region Appartment handling
-        public ObservableCollection<Appartment> Appartments { get; private set; }
+
+        public ObservableCollection<Appartment> Appartments
+        {
+            get { return _appartments; }
+            set { _appartments = value; OnPropertyChanged(); }
+        }
+
         private readonly ObservableCollection<Appartment> _selectedAppartments = new ObservableCollection<Appartment>();
         public ObservableCollection<Appartment> SelectedAppartments
         {
@@ -75,8 +90,26 @@ namespace GUI.ViewModel
         #endregion // Appartment handling
 
         #region Sensor handling
-        public ObservableCollection<string> SensorTypes { get; private set; }
-        public ObservableCollection<Sensor> Sensors { get; private set; }
+
+        public ObservableCollection<string> SensorTypes
+        {
+            get { return _sensorTypes; }
+            private set
+            {
+                if (_sensorTypes == value) return;
+                _sensorTypes = value; 
+                OnPropertyChanged();}
+        }
+
+        public ObservableCollection<Sensor> Sensors
+        {
+            get { return _sensors; }
+            private set
+            {
+                _sensors = value;
+                UpdateSensorTypes();
+            }
+        }
 
         private string _selectedSensorType;
 
@@ -97,6 +130,10 @@ namespace GUI.ViewModel
         #region Plot handling
 
         private Graph.Graph _graph;
+        private ObservableCollection<Appartment> _appartments;
+        private ObservableCollection<string> _sensorTypes;
+        private ObservableCollection<Sensor> _sensors;
+
         public Graph.Graph Graph
         {
             get { return _graph; }
