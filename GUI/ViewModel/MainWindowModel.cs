@@ -20,7 +20,6 @@ namespace GUI.ViewModel
     {
         private GDL _gdl;
         private int max = 11803;
-       
 
         public Commands Commands { get; set; }
         public Progress Progress { get; set; }

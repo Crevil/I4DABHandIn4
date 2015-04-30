@@ -74,6 +74,11 @@ namespace DAL.Repository
             return await _context.Set<T>().Where(expression).ToListAsync();
         }
 
+        public async Task<ICollection<T>> FindAllDoubleWhere(Expression<Func<T, bool>> exp1, Expression<Func<T, bool>> exp2)
+        {
+            return await _context.Set<T>().Where(exp1).Where(exp2).ToListAsync();
+        }
+
         public async Task<T> FindWithInclude(Expression<Func<T, object>> include, Expression<Func<T, bool>> expression)
         {
             return await _context.Set<T>().Include(include).SingleOrDefaultAsync(expression);
