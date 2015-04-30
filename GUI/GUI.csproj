@@ -70,6 +70,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Migrations\201504300724280_Context to GUI.cs" />
+    <Compile Include="Migrations\201504300724280_Context to GUI.Designer.cs">
+      <DependentUpon>201504300724280_Context to GUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\GDL.cs" />
     <Compile Include="ViewModel\Commands.cs" />
     <Compile Include="ViewModel\Graph\Types\HumidityGraph.cs" />
@@ -112,6 +117,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <EmbeddedResource Include="Migrations\201504300724280_Context to GUI.resx">
+      <DependentUpon>201504300724280_Context to GUI.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
