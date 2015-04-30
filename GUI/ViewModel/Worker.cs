@@ -16,20 +16,24 @@ namespace GUI.ViewModel
     {
         private SCM.BackgroundWorker backgroundWorker;
         private DbRepository Repository;
-        private Progress progress;
+        private Progress _progress;
+        private Graph.Graph _graph;
         private int _count = 0;
         private int _max = 11803;
-        
+
+        // 1 = single, 2 = live
+        private int state = 0;
+
         public event SCM.ProgressChangedEventHandler ProgressChanged;
 
         public event SCM.PropertyChangedEventHandler PropertyChanged;
 
         public event SCM.AsyncCompletedEventHandler AsyncCompleted;
 
-        public Worker(Progress p)
+        public Worker(Progress p, Graph.Graph graph)
         {
             Repository = new DbRepository();
-            progress = p;
+            _progress = p;
 
             if (backgroundWorker != null)
             {
@@ -47,8 +51,14 @@ namespace GUI.ViewModel
 
         public bool DoSingle()
         {
-            backgroundWorker.DoWork -= BackgroundWorker_DoLiveLogging;
-            backgroundWorker.DoWork += BackgroundWorker_DoSingle;
+            if (state == 0) backgroundWorker.DoWork += BackgroundWorker_DoSingle;
+            else if (state == 2)
+            {
+                backgroundWorker.DoWork -= BackgroundWorker_DoLiveLogging;
+                backgroundWorker.DoWork += BackgroundWorker_DoSingle;
+            }
+
+            state = 1;
 
             try
             {
@@ -63,8 +73,14 @@ namespace GUI.ViewModel
 
         public bool DoLive()
         {
-            backgroundWorker.DoWork -= BackgroundWorker_DoSingle;
-            backgroundWorker.DoWork += BackgroundWorker_DoLiveLogging;
+            if (state == 0) backgroundWorker.DoWork += BackgroundWorker_DoLiveLogging;
+            else if (state == 1)
+            {
+                backgroundWorker.DoWork -= BackgroundWorker_DoSingle;
+                backgroundWorker.DoWork += BackgroundWorker_DoLiveLogging;
+            }
+
+            state = 2;
 
             try
             {
@@ -84,8 +100,8 @@ namespace GUI.ViewModel
 
         private void BackgroundWorker_DoLiveLogging(object sender, SCM.DoWorkEventArgs e)
         {
-            progress.Max = _max;
-            _count = progress.Current;
+            _progress.Max = _max;
+            _count = _progress.Current;
 
             while (_count < _max)
             {
@@ -110,8 +126,8 @@ namespace GUI.ViewModel
         private void BackgroundWorker_DoSingle(object sender, SCM.DoWorkEventArgs e)
         {
             backgroundWorker.CancelAsync();
-            progress.Max = _max;
-            _count = progress.Current;
+            _progress.Max = _max;
+            _count = _progress.Current;
             _count++;
 
             Task t = Repository.AddCollectionOfMeasurements(GDL.LoadJson(_count));
@@ -146,14 +162,16 @@ namespace GUI.ViewModel
 
         private void BackgroundWorker_ProgressChanged(object sender, SCM.ProgressChangedEventArgs e)
         {
-            progress.Current = _count;
+            _progress.Current = _count;
+            if(_graph != null) _graph.UpdateModel();
         }
 
         private void BackgroundWorker_RunWorkerCompleted(object sender, SCM.RunWorkerCompletedEventArgs e)
         {
             if (e.Cancelled)
             {
-                progress.Current = _count;
+                _progress.Current = _count;
+                if (_graph != null) _graph.UpdateModel();
             }
             else if (e.Error != null)
             {
