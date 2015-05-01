@@ -13,7 +13,6 @@ namespace GUI.Model
         private readonly DbRepository _repository;
 
         public event EventHandler StaticDataLoaded;
-        public event EventHandler MeasurementsLoaded;
 
         public GDL(DbRepository repository)
         {

@@ -9,13 +9,11 @@ namespace DAL.Repository
 {
     public class Repository<T> : IRepository<T> where T : class
     {
-        private Context _context;
-        private object _contextLock;
+        private readonly Context _context;
 
         public Repository(Context context)
         {
             _context = context;
-            _contextLock = new object();
         }
 
         public async Task<int> Add(T t)
@@ -26,9 +24,11 @@ namespace DAL.Repository
 
         public async Task<int> AddCollection(ICollection<T> t)
         {
-            lock(_contextLock)
-                _context.Set<T>().AddRange(t);
-            return await _context.SaveChangesAsync();
+            using (var context = new Context())
+            {
+                context.Set<T>().AddRange(t);
+                return await context.SaveChangesAsync();
+            }
         }
 
         public async Task<T> Update(T updated, int key)

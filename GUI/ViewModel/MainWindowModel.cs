@@ -6,10 +6,12 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 using DAL;
 using DAL.Entities;
 using GUI.Annotations;
 using GUI.Model;
+using GUI.ViewModel.Converters;
 using GUI.ViewModel.Graph;
 using GUI.ViewModel.Graph.Types;
 
@@ -42,24 +44,26 @@ namespace GUI.ViewModel
             Sensors = new ObservableCollection<Sensor>(_gdl.GetSensors());
             UpdateSensorTypesList();
 
-            _measurements = new ObservableCollection<Measurement>();
+            _measurementsLock = new object();
+            Measurements = new ObservableCollection<Measurement>();
 
             // Event on appartment selection changing
-            _selectedAppartments.CollectionChanged += (sender, e) => RedrawGraph();
-            _measurements.CollectionChanged += (sender, e) => RedrawGraph();
+            SelectedAppartments.CollectionChanged += (sender, e) => GetMeasurements();
 
             // Event on static data loaded
             _gdl.StaticDataLoaded += (sender, e) => StaticDataLoaded();
 
             // Event on new loaded data
-            Commands.Worker.ProgressChanged += (sender, e) => HandleNewData();
-            Commands.Worker.ProcessCompleted += (sender, e) => HandleNewData();
+            Commands.Worker.ProgressChanged += (sender, e) => GetMeasurements();
+            Commands.Worker.ProcessCompleted += (sender, e) => GetMeasurements();
         }
 
-        private void HandleNewData()
+        private void GetMeasurements()
         {
-            var measurements = Task.Run(() => _gdl.GetMeasurements(SelectedAppartments, SelectedSensorType));
-            _measurements = new ObservableCollection<Measurement>(measurements.Result);
+            if (SelectedAppartments.Count <= 0 || SelectedSensorType == null) return;
+
+            var measurements = Task.Run(() => _gdl.GetMeasurements(SelectedAppartments, SelectedSensorType.Item1));
+            Measurements = new ObservableCollection<Measurement>(measurements.Result);
         }
 
         private void StaticDataLoaded()
@@ -73,22 +77,21 @@ namespace GUI.ViewModel
 
             var appartmentFuture = Task.Run(() => _gdl.GetAppartments());
             Appartments = new ObservableCollection<Appartment>(appartmentFuture.Result);
-
-            Task.Run(() => RedrawGraph()); // Update graph
         }
 
         private void UpdateSensorTypesList()
         {
-            var types = new ObservableCollection<string>();
+            var types = new ObservableCollection<Tuple<string, string>>();
 
-            foreach (var s in Sensors.GroupBy(g => g.Description))
-                types.Add(s.Key);
+            foreach (var s in Sensors.GroupBy(g => g.Description, g=> new Tuple<string, string>(g.Description, g.Unit)))
+                types.Add(s.First());
 
             SensorTypes = types;
         }
 
         #region Appartment handling
 
+        private ObservableCollection<Appartment> _appartments;
         public ObservableCollection<Appartment> Appartments
         {
             get { return _appartments; }
@@ -105,13 +108,14 @@ namespace GUI.ViewModel
         {
             get { return _selectedAppartments; }
         }
-
-        public event EventHandler AppartmentSelectionChanged;
         #endregion // Appartment handling
 
         #region Sensor handling
+        private ObservableCollection<Tuple<string, string>> _sensorTypes;
+        private ObservableCollection<Sensor> _sensors;
+        private Tuple<string, string> _selectedSensorType;
 
-        public ObservableCollection<string> SensorTypes
+        public ObservableCollection<Tuple<string, string>> SensorTypes
         {
             get { return _sensorTypes; }
             private set
@@ -132,16 +136,15 @@ namespace GUI.ViewModel
             }
         }
 
-        private string _selectedSensorType;
 
-        public string SelectedSensorType
+        public Tuple<string, string> SelectedSensorType
         {
             get { return _selectedSensorType; }
             set
             {
-                if (_selectedSensorType == value) return;
+                if (Equals(_selectedSensorType, value)) return;
                 _selectedSensorType = value;
-                RedrawGraph(); 
+                GetMeasurements();
             }
         }
 
@@ -150,10 +153,8 @@ namespace GUI.ViewModel
         #region Plot handling
 
         private Graph.Graph _graph;
-        private ObservableCollection<Appartment> _appartments;
-        private ObservableCollection<string> _sensorTypes;
-        private ObservableCollection<Sensor> _sensors;
-        private ObservableCollection<Measurement> _measurements; 
+        private ObservableCollection<Measurement> _measurements;
+        private readonly object _measurementsLock;
 
         public Graph.Graph Graph
         {
@@ -166,25 +167,33 @@ namespace GUI.ViewModel
             }
         }
 
+        public ObservableCollection<Measurement> Measurements
+        {
+            get { return _measurements; }
+            set
+            {
+                if (Equals(_measurements, value)) return;
+                lock (_measurementsLock)
+                    _measurements = value;
+
+                if(_measurements.Count > 0)
+                    Dispatcher.CurrentDispatcher.BeginInvoke(new Action(RedrawGraph));
+            }
+        }
+
         private void RedrawGraph()
         {
             // If nothing is selected, do nothing
-            if ((SelectedAppartments.Count <= 0 || SelectedSensorType == null) && Graph != null )
+            if (SelectedAppartments.Count <= 0 || SelectedSensorType == null)
                 return;
 
-            IGraphType type;
-            switch (SelectedSensorType)
-            {
-                case "Temperatue":
-                type = new TemperatureGraph();
-                break;
-                case "Humidity":
-                type = new HumidityGraph();
-                break;
-                default:
-                type = new TemperatureGraph();
-                break;
-            }
+            var converter = new SensorTypeToStringConverter();
+
+            var type = new GraphPlot {
+                            Title = (string)converter.Convert(SelectedSensorType, null, null, null),
+                            Unit = SelectedSensorType.Item2,
+                            YMininumValue = (Measurements.Min(m => m.Value) < 0) ? Measurements.Min(m => m.Value) : 0
+            };
 
             Graph = new Graph.Graph(_measurements, type);
         }

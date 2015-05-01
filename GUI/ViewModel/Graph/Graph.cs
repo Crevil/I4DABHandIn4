@@ -14,8 +14,7 @@ namespace GUI.ViewModel.Graph
     public class Graph : INotifyPropertyChanged
     {
         private PlotView _plotView;
-        private readonly IGraphType _type;
-        private ICollection<Measurement> _measurements;
+        private readonly GraphPlot _type;
 
         public PlotView PlotView
         {
@@ -28,23 +27,22 @@ namespace GUI.ViewModel.Graph
             }
         }
 
-        public Graph([NotNull] ICollection<Measurement> measurements, [NotNull] IGraphType type)
+        public Graph([NotNull] ICollection<Measurement> measurements, [NotNull] GraphPlot type)
         {
             if (measurements == null) throw new ArgumentNullException("measurements");
             if (type == null) throw new ArgumentNullException("type");
 
-            _measurements = measurements;
             _type = type;
 
             PlotView = new PlotView {Model = new PlotModel()};
 
             _type.PlotModel = PlotView.Model;
-            _type.Measurements = _measurements;
+            _type.Measurements = measurements;
 
             _type.SetUpModel();
             _type.LoadData();
 
-            PlotView.Model.Title = "Data";
+            PlotView.Model.Title = type.Title ?? "Data plot";
             PlotView.InvalidatePlot();
         }
         public void UpdateModel() { _type.UpdateModel(); }

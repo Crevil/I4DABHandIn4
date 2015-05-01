@@ -78,11 +78,12 @@
     <Compile Include="Model\GDL.cs" />
     <Compile Include="ViewModel\Commands.cs" />
     <Compile Include="ViewModel\Converters\AppartmentToStringConverter.cs" />
+    <Compile Include="ViewModel\Converters\SensorTypeToStringConverter.cs" />
     <Compile Include="ViewModel\Graph\Types\HumidityGraph.cs" />
     <Compile Include="ViewModel\Progress.cs" />
     <Compile Include="ViewModel\RelayCommand.cs" />
     <Compile Include="ViewModel\Graph\IGraphType.cs" />
-    <Compile Include="ViewModel\Graph\Types\TemperatureGraph.cs" />
+    <Compile Include="ViewModel\Graph\Types\GraphPlot.cs" />
     <Compile Include="ViewModel\MainWindowModel.cs" />
     <Compile Include="ViewModel\MultiSelection\IListItemConverter.cs" />
     <Compile Include="ViewModel\MultiSelection\MultiSelectorBehaviours.cs" />

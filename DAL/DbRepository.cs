@@ -40,12 +40,12 @@ namespace DAL
             foreach (var appartment in appartments)
             {
                 var appartment1 = appartment;
-                var measurements = await _measureRepos
-                    .FindAllDoubleWhere(m => m.AppartmentId == appartment1.AppartmentId,
-                        m => m.Sensor.Description == sensorType);
-                returnList.AddRange(
-                    measurements.ToList()
+                var measurements = await _measureRepos.FindAllDoubleWhere(
+                                                            m => m.AppartmentId == appartment1.AppartmentId, 
+                                                            m => m.Sensor.Description == sensorType
                 );
+
+                returnList.AddRange(measurements.ToList());
             }
             return returnList;
         }

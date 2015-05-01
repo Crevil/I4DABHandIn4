@@ -5,15 +5,21 @@ using System.Linq;
 using DAL.Entities;
 using GUI.Annotations;
 using GUI.Model;
+using GUI.ViewModel.Converters;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 
 namespace GUI.ViewModel.Graph.Types
 {
-    public class TemperatureGraph : IGraphType
+    public class GraphPlot
     {
         public ICollection<Measurement> Measurements { get; set; }
+
+        public string Title { get; set; }
+
+        public string Unit { get; set; }
+        public double YMininumValue { get; set; }
 
         public PlotModel PlotModel { get; set; }
 
@@ -36,14 +42,14 @@ namespace GUI.ViewModel.Graph.Types
             };
             PlotModel.Axes.Add(dateAxis);
 
-
             var valueAxisLeft = new LinearAxis()
             {
                 Position = AxisPosition.Left,
+                Minimum = YMininumValue,
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dot,
-                Title = "Temperature",
-                Unit = "C°"
+                Title = Title,
+                Unit = Unit
             };
             PlotModel.Axes.Add(valueAxisLeft);
         }
