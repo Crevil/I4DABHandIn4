@@ -82,7 +82,6 @@
     <Compile Include="ViewModel\Graph\Types\HumidityGraph.cs" />
     <Compile Include="ViewModel\Progress.cs" />
     <Compile Include="ViewModel\RelayCommand.cs" />
-    <Compile Include="ViewModel\Graph\IGraphType.cs" />
     <Compile Include="ViewModel\Graph\Types\GraphPlot.cs" />
     <Compile Include="ViewModel\MainWindowModel.cs" />
     <Compile Include="ViewModel\MultiSelection\IListItemConverter.cs" />
