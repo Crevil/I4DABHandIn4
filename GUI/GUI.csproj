@@ -74,6 +74,10 @@
     <Compile Include="Migrations\201504300724280_Context to GUI.Designer.cs">
       <DependentUpon>201504300724280_Context to GUI.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201505012051191_IHA Database.cs" />
+    <Compile Include="Migrations\201505012051191_IHA Database.Designer.cs">
+      <DependentUpon>201505012051191_IHA Database.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\GDL.cs" />
     <Compile Include="ViewModel\ButtonsModel.cs" />
@@ -120,6 +124,9 @@
     </Compile>
     <EmbeddedResource Include="Migrations\201504300724280_Context to GUI.resx">
       <DependentUpon>201504300724280_Context to GUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201505012051191_IHA Database.resx">
+      <DependentUpon>201505012051191_IHA Database.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

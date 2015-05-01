@@ -3,6 +3,6 @@ FOR INSERT
 AS
 	DECLARE @LogString NVARCHAR(MAX)
 	SELECT @LogString = (SELECT AppartmentId + ' ' + Floor
-	+ ' ' + Number + ' ' + Size FROM Inserted)
+	+ ' ' + No + ' ' + Size FROM Inserted)
 	INSERT INTO dbo.Logs (Operation,LogEntryInserted,LogEntryDeleted) VALUES ('Appartment Insert',@LogString,0)
 GO
