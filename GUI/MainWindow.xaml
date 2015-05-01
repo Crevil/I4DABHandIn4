@@ -77,8 +77,8 @@
         
         <StackPanel Grid.Column="4" Grid.Row="0" Height="50" Width="370" VerticalAlignment="Top" Orientation="Horizontal" HorizontalAlignment="Left">
             <Button Command="{Binding Commands.ClickStaticCommand}" IsEnabled="{Binding Commands.StaticButtonEnabled, Mode=TwoWay}" x:Name="Static" Margin="10" VerticalAlignment="Center" Height="32" Padding="5">Add Static Data</Button>
-            <Button Command="{Binding Commands.ClickSingleCommand}" x:Name="Single" Margin="10" VerticalAlignment="Center" Height="32" Padding="5">Read Single</Button>
-            <Button Command="{Binding Commands.ClickLiveCommand}" Content="{Binding Commands.LiveButtonContent, Mode=TwoWay}" x:Name="Live" Margin="10" VerticalAlignment="Center" Height="32" Padding="5" ></Button>                   
+            <Button Command="{Binding Commands.ClickSingleCommand}" IsEnabled="{Binding Commands.JsonButtonsEnabled, Mode=TwoWay}" x:Name="Single" Margin="10" VerticalAlignment="Center" Height="32" Padding="5">Read Single</Button>
+            <Button Command="{Binding Commands.ClickLiveCommand}" IsEnabled="{Binding Commands.JsonButtonsEnabled, Mode=TwoWay}" Content="{Binding Commands.LiveButtonContent, Mode=TwoWay}" x:Name="Live" Margin="10" VerticalAlignment="Center" Height="32" Padding="5" ></Button>                   
         </StackPanel>
 
         <StackPanel Grid.Column="4" Grid.Row="0" Height="50" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">

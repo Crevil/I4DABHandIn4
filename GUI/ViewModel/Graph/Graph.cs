@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using DAL.Entities;
 using GUI.Annotations;
-using GUI.ViewModel.Graph.Types;
 using OxyPlot;
 using OxyPlot.Wpf;
 
@@ -45,7 +43,6 @@ namespace GUI.ViewModel.Graph
             PlotView.Model.Title = type.Title ?? "Data plot";
             PlotView.InvalidatePlot();
         }
-        public void UpdateModel() { _type.UpdateModel(); }
 
         #region Plot markup
         public static readonly List<OxyColor> Colors = new List<OxyColor>

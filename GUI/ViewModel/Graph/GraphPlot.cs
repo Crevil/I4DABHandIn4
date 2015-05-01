@@ -1,16 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using DAL.Entities;
 using GUI.Annotations;
-using GUI.Model;
 using GUI.ViewModel.Converters;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 
-namespace GUI.ViewModel.Graph.Types
+namespace GUI.ViewModel.Graph
 {
     public class GraphPlot
     {
@@ -57,6 +55,8 @@ namespace GUI.ViewModel.Graph.Types
         public void LoadData()
         {
             var dataPerDetector = SelectMeasurements(Measurements);
+            var appartmentConverter = new AppartmentToStringConverter();
+
             PlotModel.Series.Clear();
             foreach (var data in dataPerDetector)
             {
@@ -67,7 +67,7 @@ namespace GUI.ViewModel.Graph.Types
                     MarkerStroke = Graph.Colors[data.Key % Graph.Colors.Count],
                     MarkerType = Graph.MarkerTypes[data.Key % Graph.MarkerTypes.Count],
                     CanTrackerInterpolatePoints = false,
-                    Title = string.Format("Appartment {0}", data.First().AppartmentId),
+                    Title = (string)appartmentConverter.Convert(data.First().Appartment, null, null, null),
                     Smooth = false
                 };
 
@@ -76,28 +76,9 @@ namespace GUI.ViewModel.Graph.Types
                 PlotModel.Series.Add(line);
             }
         }
-
-        public void UpdateModel()
-        {
-            LoadData(); // Dummy
-            // Needs work!  Indexing on Series collection goes out of bounds!
-            //if (PlotModel.Series.Count == 0) return;
-
-            //var dataPerDetector = SelectMeasurements(Measurements);
-
-            //foreach (var data in dataPerDetector)
-            //{
-            //    var lineSerie = PlotModel.Series[data.Key] as LineSeries;
-            //    if (lineSerie != null)
-            //    {
-            //        AddMeasurementPoint(data, lineSerie);
-            //    }
-            //}
-        }
-
         private static IEnumerable<IGrouping<int, Measurement>> SelectMeasurements(ICollection<Measurement> measurements)
         {
-            return measurements.GroupBy(m => m.AppartmentId).OrderBy(m => m.Key).ToList();
+            return measurements.GroupBy(m => m.Appartment.AppartmentId).OrderBy(m => m.Key).ToList();
         }
 
         public void AddMeasurementPoint(IEnumerable<Measurement> data, [NotNull] DataPointSeries lineSerie)

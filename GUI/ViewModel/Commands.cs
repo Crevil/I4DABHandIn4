@@ -26,6 +26,7 @@ namespace GUI.ViewModel
         public Commands(GDL gdl)
         {
             StaticButtonEnabled = true;
+            JsonButtonsEnabled = false;
             LiveButtonContent = "Read Live";
             _gdl = gdl;
         }
@@ -50,6 +51,18 @@ namespace GUI.ViewModel
             {
                 if (Equals(_staticButtonEnabled, value)) return;
                 _staticButtonEnabled = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        private bool _jsonButtonsEnabled;
+        public bool JsonButtonsEnabled
+        {
+            get { return _jsonButtonsEnabled; }
+            set
+            {
+                if (Equals(_jsonButtonsEnabled, value)) return;
+                _jsonButtonsEnabled = value;
                 NotifyPropertyChanged();
             }
         }

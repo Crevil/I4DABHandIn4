@@ -76,13 +76,13 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\GDL.cs" />
+    <Compile Include="ViewModel\ButtonsModel.cs" />
     <Compile Include="ViewModel\Commands.cs" />
     <Compile Include="ViewModel\Converters\AppartmentToStringConverter.cs" />
     <Compile Include="ViewModel\Converters\SensorTypeToStringConverter.cs" />
-    <Compile Include="ViewModel\Graph\Types\HumidityGraph.cs" />
     <Compile Include="ViewModel\Progress.cs" />
     <Compile Include="ViewModel\RelayCommand.cs" />
-    <Compile Include="ViewModel\Graph\Types\GraphPlot.cs" />
+    <Compile Include="ViewModel\Graph\GraphPlot.cs" />
     <Compile Include="ViewModel\MainWindowModel.cs" />
     <Compile Include="ViewModel\MultiSelection\IListItemConverter.cs" />
     <Compile Include="ViewModel\MultiSelection\MultiSelectorBehaviours.cs" />
@@ -136,7 +136,9 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="ViewModel\Graph\Types\" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DAL\DAL.csproj">
       <Project>{4b37f8d1-10e3-49fa-9a64-555e0746c4be}</Project>

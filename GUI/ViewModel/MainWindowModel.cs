@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -13,7 +11,6 @@ using GUI.Annotations;
 using GUI.Model;
 using GUI.ViewModel.Converters;
 using GUI.ViewModel.Graph;
-using GUI.ViewModel.Graph.Types;
 
 namespace GUI.ViewModel
 {
@@ -21,7 +18,6 @@ namespace GUI.ViewModel
     {
         private readonly GDL _gdl;
         private const int Max = 11803;
-        private readonly DbRepository _repository;
 
         public Commands Commands { get; set; }
         public Progress Progress { get; set; }
@@ -32,13 +28,12 @@ namespace GUI.ViewModel
             if (repository == null) throw new ArgumentNullException("repository");
 
             _gdl = gdl;
-            _repository = repository;
 
             Commands = new Commands(_gdl);
 
             // Initialisere progress class og workeren
             Progress = new Progress(0, Max);
-            Commands.Worker = new Worker(Progress, _repository);
+            Commands.Worker = new Worker(Progress, repository);
 
             Appartments = new ObservableCollection<Appartment>(gdl.GetAppartments());
             Sensors = new ObservableCollection<Sensor>(_gdl.GetSensors());
@@ -77,16 +72,7 @@ namespace GUI.ViewModel
 
             var appartmentFuture = Task.Run(() => _gdl.GetAppartments());
             Appartments = new ObservableCollection<Appartment>(appartmentFuture.Result);
-        }
-
-        private void UpdateSensorTypesList()
-        {
-            var types = new ObservableCollection<Tuple<string, string>>();
-
-            foreach (var s in Sensors.GroupBy(g => g.Description, g=> new Tuple<string, string>(g.Description, g.Unit)))
-                types.Add(s.First());
-
-            SensorTypes = types;
+            Commands.JsonButtonsEnabled = true;
         }
 
         #region Appartment handling
@@ -136,6 +122,15 @@ namespace GUI.ViewModel
             }
         }
 
+        private void UpdateSensorTypesList()
+        {
+            var types = new ObservableCollection<Tuple<string, string>>();
+
+            foreach (var s in Sensors.GroupBy(g => g.Description, g => new Tuple<string, string>(g.Description, g.Unit)))
+                types.Add(s.First());
+
+            SensorTypes = types;
+        }
 
         public Tuple<string, string> SelectedSensorType
         {
@@ -147,7 +142,6 @@ namespace GUI.ViewModel
                 GetMeasurements();
             }
         }
-
         #endregion // Sensor lists
         
         #region Plot handling
