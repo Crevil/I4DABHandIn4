@@ -67,6 +67,14 @@
     <Compile Include="Migrations\201504301218406_Changed pk in Measurement.Designer.cs">
       <DependentUpon>201504301218406_Changed pk in Measurement.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201505010915167_Timestamp type changed to DateTime.cs" />
+    <Compile Include="Migrations\201505010915167_Timestamp type changed to DateTime.Designer.cs">
+      <DependentUpon>201505010915167_Timestamp type changed to DateTime.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201505010943094_Changing precision on timestamp.cs" />
+    <Compile Include="Migrations\201505010943094_Changing precision on timestamp.Designer.cs">
+      <DependentUpon>201505010943094_Changing precision on timestamp.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\IRepository.cs" />
@@ -83,6 +91,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201504301218406_Changed pk in Measurement.resx">
       <DependentUpon>201504301218406_Changed pk in Measurement.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201505010915167_Timestamp type changed to DateTime.resx">
+      <DependentUpon>201505010915167_Timestamp type changed to DateTime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201505010943094_Changing precision on timestamp.resx">
+      <DependentUpon>201505010943094_Changing precision on timestamp.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -31,6 +31,11 @@ namespace DAL
             modelBuilder.Entity<Measurement>()
                 .HasRequired(m => m.Sensor);
 
+            modelBuilder.Entity<Measurement>()
+                .Property(d => d.Timestamp)
+                .HasColumnType("datetime2")
+                .HasPrecision(3);
+
             modelBuilder.Entity<Appartment>().MapToStoredProcedures();
             modelBuilder.Entity<Sensor>();
             modelBuilder.Entity<Measurement>().MapToStoredProcedures();

@@ -9,7 +9,7 @@ namespace GUI.Model
 {
     public class GDL
     {
-        private DbRepository _repository;
+        private readonly DbRepository _repository;
 
         public event EventHandler OriginalLoaded;
 
@@ -20,12 +20,15 @@ namespace GUI.Model
 
         public void LoadOriginal()
         {
-            string originalUrl = "http://userportal.iha.dk/~jrt/i4dab/E14/HandIn4/GFKSC002_original.txt";
+            const string originalUrl = "http://userportal.iha.dk/~jrt/i4dab/E14/HandIn4/GFKSC002_original.txt";
 
-            Tuple<ICollection<Appartment>, ICollection<Sensor>> t = JSONDeserialisator.DeserialiseOriginalFile(StringDownloader.DownloadStringFromURL(originalUrl));
-
-            _repository.AddCollectionOfAppartments(t.Item1).Wait();
-            _repository.AddCollectionOfSensors(t.Item2).Wait();
+            var t = JSONDeserialisator.DeserialiseOriginalFile(StringDownloader.DownloadStringFromURL(originalUrl));
+            
+            lock (_repository)
+            {
+                _repository.AddCollectionOfAppartments(t.Item1).Wait();
+                _repository.AddCollectionOfSensors(t.Item2).Wait();
+            }
 
             if (OriginalLoaded != null)
                 OriginalLoaded(this, new EventArgs());
@@ -33,8 +36,8 @@ namespace GUI.Model
 
         static public ICollection<Measurement> LoadJson(int nr)
         {
-            string begin = "http://userportal.iha.dk/~jrt/i4dab/E14/HandIn4/dataGDL/data/";
-            string end = ".json";
+            const string begin = "http://userportal.iha.dk/~jrt/i4dab/E14/HandIn4/dataGDL/data/";
+            const string end = ".json";
             return JSONDeserialisator.DeserialiseMeasurement(StringDownloader.DownloadStringFromURL(begin + nr.ToString() + end));
         }
 
@@ -46,8 +49,12 @@ namespace GUI.Model
         /// <returns></returns>
         public ICollection<Measurement> GetMeasurements(ICollection<Appartment> appartments, string sensorType )
         {
-            var r = _repository.GetMeasurements(appartments, sensorType);
-            return r;
+            lock (_repository)
+            {
+                var r = _repository.GetMeasurements(appartments, sensorType);
+                return r;
+            }
+            
         }
 
         /// <summary>
@@ -56,7 +63,8 @@ namespace GUI.Model
         /// <returns>Collection of appartments</returns>
         public ICollection<Appartment> GetAppartments()
         {
-            return _repository.Appartments;
+            lock(_repository)
+                return _repository.Appartments;
         }
 
         /// <summary>
@@ -65,26 +73,8 @@ namespace GUI.Model
         /// <returns>Collection of sensors</returns>
         public ICollection<Sensor> GetSensors()
         {
-            return _repository.Sensors;
-        }
-    }
-
-
-    /// <summary>
-    /// Helper class for time convertion between doubles and DateTime
-    /// </summary>
-    public static class TimeHelpers
-    {
-        public static double ConvertToUnixTimestamp(DateTime date)
-        {
-            var origin = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-            var diff = date.ToUniversalTime() - origin;
-            return Math.Floor(diff.TotalSeconds);
-        }
-        public static DateTime ConvertFromUnixTimestamp(double timestamp)
-        {
-            var origin = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-            return origin.AddSeconds(timestamp);
+            lock(_repository)
+                return _repository.Sensors;
         }
     }
 }

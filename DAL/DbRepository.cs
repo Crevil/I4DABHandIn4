@@ -39,14 +39,16 @@ namespace DAL
         {
             List<Measurement> returnList = new List<Measurement>();
 
+            lock (_measureRepos)
             foreach (var appartment in appartments)
             {
-                returnList.AddRange(
-                    _measureRepos
-                    .FindAllDoubleWhere(
-                        m => m.AppartmentId == appartment.AppartmentId,
-                        m => m.Sensor.Description == sensorType)
-                    .Result.ToList()
+                var appartment1 = appartment;
+                    returnList.AddRange(
+                        _measureRepos
+                        .FindAllDoubleWhere(
+                            m => m.AppartmentId == appartment1.AppartmentId,
+                            m => m.Sensor.Description == sensorType)
+                        .Result.ToList()
                 );
             }
             return returnList;
@@ -71,7 +73,8 @@ namespace DAL
 
         public void AddCollectionOfMeasurements(ICollection<Measurement> measurements)
         {
-             _measureRepos.AddCollection(measurements).Wait();
+            lock (_measureRepos)
+                _measureRepos.AddCollection(measurements);
         }
     }
 }

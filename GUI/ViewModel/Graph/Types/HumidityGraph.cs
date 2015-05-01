@@ -28,7 +28,9 @@ namespace GUI.ViewModel.Graph.Types
             var dateAxis = new DateTimeAxis()
             {
                 Position = AxisPosition.Bottom,
-                Title = "Date",
+                Title = "Date", 
+                Minimum = 2013, 
+                Maximum = 2015,
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dot,
                 IntervalLength = 80
@@ -101,11 +103,7 @@ namespace GUI.ViewModel.Graph.Types
                     lineSerie.Points.Add
                         (
                             new DataPoint(
-                                Axis.ToDouble(
-                                    TimeHelpers.ConvertFromUnixTimestamp(
-                                        double.Parse(d.Timestamp, CultureInfo.CurrentCulture)
-                                        )
-                                    ),
+                                DateTimeAxis.ToDouble(d.Timestamp),
                                 d.Value
                                 )
                         )

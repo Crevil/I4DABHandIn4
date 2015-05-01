@@ -79,11 +79,7 @@ namespace GUI.ViewModel
         private void StaticCommand()
         {
             StaticButtonEnabled = false;
-            ThreadPool.QueueUserWorkItem(delegate
-            {
-                _gdl.LoadOriginal();
-            });
-
+            Task.Run(() =>_gdl.LoadOriginal());
         }
 
         private ICommand _liveCommand;

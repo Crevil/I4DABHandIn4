@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using DAL;
 using GUI.Model;
@@ -51,11 +46,15 @@ namespace GUI.ViewModel
 
         public bool DoSingle()
         {
-            if (state == 0) backgroundWorker.DoWork += BackgroundWorker_DoSingle;
-            else if (state == 2)
+            switch (state)
             {
-                backgroundWorker.DoWork -= BackgroundWorker_DoLiveLogging;
-                backgroundWorker.DoWork += BackgroundWorker_DoSingle;
+                case 0:
+                    backgroundWorker.DoWork += BackgroundWorker_DoSingle;
+                    break;
+                case 2:
+                    backgroundWorker.DoWork -= BackgroundWorker_DoLiveLogging;
+                    backgroundWorker.DoWork += BackgroundWorker_DoSingle;
+                    break;
             }
 
             state = 1;
@@ -73,11 +72,15 @@ namespace GUI.ViewModel
 
         public bool DoLive()
         {
-            if (state == 0) backgroundWorker.DoWork += BackgroundWorker_DoLiveLogging;
-            else if (state == 1)
+            switch (state)
             {
-                backgroundWorker.DoWork -= BackgroundWorker_DoSingle;
-                backgroundWorker.DoWork += BackgroundWorker_DoLiveLogging;
+                case 0:
+                    backgroundWorker.DoWork += BackgroundWorker_DoLiveLogging;
+                    break;
+                case 1:
+                    backgroundWorker.DoWork -= BackgroundWorker_DoSingle;
+                    backgroundWorker.DoWork += BackgroundWorker_DoLiveLogging;
+                    break;
             }
 
             state = 2;
@@ -119,7 +122,7 @@ namespace GUI.ViewModel
                 }
 
                 backgroundWorker.ReportProgress(_count);
-                Thread.Sleep(5000);
+                Thread.Sleep(1000);
             }
 
         }
@@ -133,17 +136,13 @@ namespace GUI.ViewModel
 
             if (_count == 8) _count++;
 
-            Task.Run(() => Repository.AddCollectionOfMeasurements(GDL.LoadJson(_count)));
+            Repository.AddCollectionOfMeasurements(GDL.LoadJson(_count));
 
-            // UPDATE VIEW MODEL!
-            
             backgroundWorker.ReportProgress(_count);
 
-            if (backgroundWorker.CancellationPending)
-            {
-                e.Cancel = true;
-                return;
-            }          
+            if (!backgroundWorker.CancellationPending) return;
+
+            e.Cancel = true;
         }
 
         protected virtual void OnProgressChanged(SCM.ProgressChangedEventArgs e)

@@ -29,9 +29,12 @@ namespace GUI.ViewModel.Graph.Types
             {
                 Position = AxisPosition.Bottom,
                 Title = "Date",
+                Minimum = DateTimeAxis.ToDouble(new DateTime(2014, 1, 1)),
+                Maximum = DateTimeAxis.ToDouble(new DateTime(2014, 12, 30)),
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dot,
-                IntervalLength = 80
+                IntervalLength = 80, 
+                StringFormat = "d-M-yyyy hh:mm:ss", 
             };
             PlotModel.Axes.Add(dateAxis);
 
@@ -41,7 +44,8 @@ namespace GUI.ViewModel.Graph.Types
                 Position = AxisPosition.Left,
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dot,
-                Title = "Temperature"
+                Title = "Temperature",
+                Unit = "°"
             };
             PlotModel.Axes.Add(valueAxisLeft);
         }
@@ -101,7 +105,7 @@ namespace GUI.ViewModel.Graph.Types
                     lineSerie.Points.Add
                         (
                             new DataPoint(
-                                Axis.ToDouble(d.Value),
+                                DateTimeAxis.ToDouble(d.Timestamp),
                                 d.Value
                                 )
                         )
