@@ -11,7 +11,7 @@ namespace DAL
 {
     public class Context : DbContext
     {
-        public Context() : base("GrundfosDormitoryDb")
+        public Context() : base("GrundfosDormitoryDbIHA")
         {
             
         }
