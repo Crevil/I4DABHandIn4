@@ -20,7 +20,12 @@ namespace GUI.ViewModel.Graph
         public PlotView PlotView
         {
             get { return _plotView; }
-            set { _plotView = value; OnPropertyChanged(); }
+            set
+            {
+                if (Equals(_plotView, value)) return;
+                _plotView = value;
+                OnPropertyChanged();
+            }
         }
 
         public Graph([NotNull] ICollection<Measurement> measurements, [NotNull] IGraphType type)
@@ -56,8 +61,8 @@ namespace GUI.ViewModel.Graph
 
         public static readonly List<MarkerType> MarkerTypes = new List<MarkerType>
                                                    {
-                                                       MarkerType.Plus,
                                                        MarkerType.Star,
+                                                       MarkerType.Plus,
                                                        MarkerType.Diamond,
                                                        MarkerType.Triangle,
                                                        MarkerType.Cross

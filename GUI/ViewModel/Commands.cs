@@ -1,17 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
-using DAL;
-using DAL.Entities;
 using GUI.Model;
 using MvvmFoundation.Wpf;
 
@@ -19,23 +9,19 @@ namespace GUI.ViewModel
 {
     public class Commands : INotifyPropertyChanged
     {
+        private readonly GDL _gdl;
+        private const string LiveButtonTextNotRunning = "Read Live";
+        private const string LiveButtonTextRunning = "Cancel";
+
         public Worker Worker { get; set; }
-        private GDL _gdl;
 
-        private string _liveButtonContent;
-        public string LiveButtonContent
-        {
-            get { return _liveButtonContent;}
-            set
-            {
-                if (_liveButtonContent == value) return;
-                _liveButtonContent = value;
-                NotifyPropertyChanged();
-            }
-        }
+        #region Private ICommands
 
-        private const string liveButtonTextNotRunning = "Read Live";
-        private const string liveButtonTextRunning = "Cancel";
+        private ICommand _staticCommand;
+        private ICommand _liveCommand;
+        private ICommand _singleCommand;
+
+        #endregion // Private ICommands
 
         public Commands(GDL gdl)
         {
@@ -44,18 +30,89 @@ namespace GUI.ViewModel
             _gdl = gdl;
         }
 
+        private string _liveButtonContent;
+        public string LiveButtonContent
+        {
+            get { return _liveButtonContent;}
+            set
+            {
+                if (Equals(_liveButtonContent, value)) return;
+                _liveButtonContent = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         private bool _staticButtonEnabled;
         public bool StaticButtonEnabled
         {
             get { return _staticButtonEnabled;}
             set
             {
-                if (_staticButtonEnabled == value) return;
+                if (Equals(_staticButtonEnabled, value)) return;
                 _staticButtonEnabled = value;
                 NotifyPropertyChanged();
             }
         }
 
+        /// <summary>
+        /// Load static data
+        /// </summary>
+        public ICommand ClickStaticCommand
+        {
+            get
+            {
+                return _staticCommand ??
+                   (_staticCommand = new RelayCommand(StaticCommand));
+            }
+        }
+        private void StaticCommand()
+        {
+            StaticButtonEnabled = false;
+            Task.Run(() =>_gdl.LoadStaticData());
+        }
+
+        /// <summary>
+        ///  Load measurements live
+        /// </summary>
+        public ICommand ClickLiveCommand
+        {
+            get
+            {
+                return _liveCommand ??
+                   (_liveCommand = new RelayCommand(LiveCommand));
+            }
+        }
+        private void LiveCommand()
+        {
+            if (LiveButtonContent == LiveButtonTextRunning)
+            {
+                Worker.Cancel();
+            }
+            else
+            {
+                if (!Worker.DoLive()) return;
+            }
+            LiveButtonContent = (_liveButtonContent == LiveButtonTextNotRunning) ? LiveButtonTextRunning : LiveButtonTextNotRunning;
+            
+        }
+
+        /// <summary>
+        ///  Load a single measurement set
+        /// </summary>
+        public ICommand ClickSingleCommand
+        {
+            get
+            {
+                return _singleCommand ??
+                   (_singleCommand = new RelayCommand(SingleCommand));
+            }
+        }
+        private void SingleCommand()
+        {
+            Worker.DoSingle();
+        }
+
+        #region PropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
         private void NotifyPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -65,60 +122,7 @@ namespace GUI.ViewModel
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+        #endregion // PropertyChanged
 
-        private ICommand _staticCommand;
-        public ICommand ClickStaticCommand
-        {
-            get
-            {
-                return _staticCommand ??
-                       (_staticCommand = new RelayCommand(StaticCommand));
-            }
-        }
-
-        private void StaticCommand()
-        {
-            StaticButtonEnabled = false;
-            Task.Run(() =>_gdl.LoadOriginal());
-        }
-
-        private ICommand _liveCommand;
-        public ICommand ClickLiveCommand
-        {
-            get
-            {
-                return _liveCommand ??
-                   (_liveCommand = new RelayCommand(LiveCommand));
-            }
-        }
-
-        private void LiveCommand()
-        {
-            if (LiveButtonContent == liveButtonTextRunning)
-            {
-                Worker.Cancel();
-            }
-            else
-            {
-                if (!Worker.DoLive()) return;
-            }
-            LiveButtonContent = (_liveButtonContent == liveButtonTextNotRunning) ? liveButtonTextRunning : liveButtonTextNotRunning;
-            
-        }
-
-        private ICommand _singleCommand;
-        public ICommand ClickSingleCommand
-        {
-            get
-            {
-                return _singleCommand ??
-                   (_singleCommand = new RelayCommand(SingleCommand));
-            }
-        }
-
-        private void SingleCommand()
-        {
-            Worker.DoSingle();
-        }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -15,54 +17,71 @@ namespace GUI.ViewModel
 {
     public class MainWindowModel : INotifyPropertyChanged
     {
-        private GDL _gdl;
-        private int max = 11803;
-        private DbRepository _repository;
+        private readonly GDL _gdl;
+        private const int Max = 11803;
+        private readonly DbRepository _repository;
 
         public Commands Commands { get; set; }
         public Progress Progress { get; set; }
 
-        public MainWindowModel([NotNull] GDL gdl, DbRepository repository)
+        public MainWindowModel([NotNull] GDL gdl, [NotNull] DbRepository repository)
         {
             if (gdl == null) throw new ArgumentNullException("gdl");
+            if (repository == null) throw new ArgumentNullException("repository");
 
             _gdl = gdl;
-
-
             _repository = repository;
+
             Commands = new Commands(_gdl);
 
             // Initialisere progress class og workeren
-            Progress = new Progress(0, max);
-            Commands.Worker = new Worker(Progress, Graph, _repository);
+            Progress = new Progress(0, Max);
+            Commands.Worker = new Worker(Progress, _repository);
 
             Appartments = new ObservableCollection<Appartment>(gdl.GetAppartments());
-            Sensors = new ObservableCollection<Sensor>(_gdl.GetSensors()); // List of sensors on GUI
+            Sensors = new ObservableCollection<Sensor>(_gdl.GetSensors());
+            UpdateSensorTypesList();
 
-            UpdateSensorTypes();
+            _measurements = new ObservableCollection<Measurement>();
 
-            // Setup selection event handler
-            _selectedAppartments.CollectionChanged += (sender, e) => SelectionChanged();
+            // Event on appartment selection changing
+            _selectedAppartments.CollectionChanged += (sender, e) => RedrawGraph();
+            _measurements.CollectionChanged += (sender, e) => RedrawGraph();
 
-            _gdl.OriginalLoaded += (sender, e) => UploadOriginalData();
+            // Event on static data loaded
+            _gdl.StaticDataLoaded += (sender, e) => StaticDataLoaded();
+
+            // Event on new loaded data
+            Commands.Worker.ProgressChanged += (sender, e) => HandleNewData();
+            Commands.Worker.ProcessCompleted += (sender, e) => HandleNewData();
         }
 
-        private void UploadOriginalData()
+        private void HandleNewData()
+        {
+            var measurements = Task.Run(() => _gdl.GetMeasurements(SelectedAppartments, SelectedSensorType));
+            _measurements = new ObservableCollection<Measurement>(measurements.Result);
+        }
+
+        private void StaticDataLoaded()
         {
             var sensorFuture = Task.Run(() => _gdl.GetSensors());
-            sensorFuture.ContinueWith(s => UpdateSensorTypes());
+            sensorFuture.ContinueWith(s =>
+            {
+                Sensors = new ObservableCollection<Sensor>(sensorFuture.Result);
+                UpdateSensorTypesList();
+            });
+
             var appartmentFuture = Task.Run(() => _gdl.GetAppartments());
-
-            Sensors = new ObservableCollection<Sensor>(sensorFuture.Result);
-
             Appartments = new ObservableCollection<Appartment>(appartmentFuture.Result);
+
+            Task.Run(() => RedrawGraph()); // Update graph
         }
 
-        private void UpdateSensorTypes()
+        private void UpdateSensorTypesList()
         {
             var types = new ObservableCollection<string>();
 
-            foreach (var s in Sensors.GroupBy(g => g.Description))// List of sensortypes on GUI
+            foreach (var s in Sensors.GroupBy(g => g.Description))
                 types.Add(s.Key);
 
             SensorTypes = types;
@@ -73,7 +92,12 @@ namespace GUI.ViewModel
         public ObservableCollection<Appartment> Appartments
         {
             get { return _appartments; }
-            set { _appartments = value; OnPropertyChanged(); }
+            set
+            {
+                if (Equals(_appartments, value)) return;
+                _appartments = value; 
+                OnPropertyChanged();
+            }
         }
 
         private readonly ObservableCollection<Appartment> _selectedAppartments = new ObservableCollection<Appartment>();
@@ -92,7 +116,7 @@ namespace GUI.ViewModel
             get { return _sensorTypes; }
             private set
             {
-                if (_sensorTypes == value) return;
+                if (Equals(_sensorTypes, value)) return;
                 _sensorTypes = value; 
                 OnPropertyChanged();}
         }
@@ -102,8 +126,9 @@ namespace GUI.ViewModel
             get { return _sensors; }
             private set
             {
+                if(Equals(_sensors, value)) return;
                 _sensors = value;
-                UpdateSensorTypes();
+                UpdateSensorTypesList();
             }
         }
 
@@ -116,57 +141,53 @@ namespace GUI.ViewModel
             {
                 if (_selectedSensorType == value) return;
                 _selectedSensorType = value;
-                SelectionChanged(); 
+                RedrawGraph(); 
             }
         }
 
         #endregion // Sensor lists
         
-
         #region Plot handling
 
         private Graph.Graph _graph;
         private ObservableCollection<Appartment> _appartments;
         private ObservableCollection<string> _sensorTypes;
         private ObservableCollection<Sensor> _sensors;
+        private ObservableCollection<Measurement> _measurements; 
 
         public Graph.Graph Graph
         {
             get { return _graph; }
             set
             {
-                if (_graph == value) return;
+                if (Equals(_graph, value)) return;
                 _graph = value;
                 OnPropertyChanged();
             }
         }
 
-        private void SelectionChanged()
+        private void RedrawGraph()
         {
-            // If nothing is selected, clear plot model
+            // If nothing is selected, do nothing
             if ((SelectedAppartments.Count <= 0 || SelectedSensorType == null) && Graph != null )
                 return;
 
-            var measurementFuture = Task.Run(() =>_gdl.GetMeasurements(SelectedAppartments, SelectedSensorType));
-            var measurements = measurementFuture.Result;
-            // This might be done better! Breaking OCP
             IGraphType type;
             switch (SelectedSensorType)
             {
                 case "Temperatue":
-                    type = new TemperatureGraph();
-                    break;
+                type = new TemperatureGraph();
+                break;
                 case "Humidity":
-                    type = new HumidityGraph();
-                    break;
+                type = new HumidityGraph();
+                break;
                 default:
-                    type = new TemperatureGraph();
-                    break;
+                type = new TemperatureGraph();
+                break;
             }
 
-            Graph = new Graph.Graph(measurements, type);
+            Graph = new Graph.Graph(_measurements, type);
         }
-
         #endregion //Plot handling
 
         #region PropertyChanged
@@ -180,11 +201,5 @@ namespace GUI.ViewModel
         }
         #endregion // PropertyChanged
 
-        #region Backgroundworker
-
-
-
-
-        #endregion
     }
 }

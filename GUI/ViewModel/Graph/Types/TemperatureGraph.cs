@@ -29,8 +29,6 @@ namespace GUI.ViewModel.Graph.Types
             {
                 Position = AxisPosition.Bottom,
                 Title = "Date",
-                Minimum = DateTimeAxis.ToDouble(new DateTime(2014, 1, 1)),
-                Maximum = DateTimeAxis.ToDouble(new DateTime(2014, 12, 30)),
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dot,
                 IntervalLength = 80, 
@@ -45,7 +43,7 @@ namespace GUI.ViewModel.Graph.Types
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dot,
                 Title = "Temperature",
-                Unit = "°"
+                Unit = "C°"
             };
             PlotModel.Axes.Add(valueAxisLeft);
         }
@@ -99,7 +97,7 @@ namespace GUI.ViewModel.Graph.Types
         public void AddMeasurementPoint(IEnumerable<Measurement> data, [NotNull] DataPointSeries lineSerie)
         {
             if (lineSerie == null) throw new ArgumentNullException("lineSerie");
-
+            data = data.OrderBy(d => d.Timestamp);
             data.ToList().ForEach(
                 d =>
                     lineSerie.Points.Add

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using DAL;
 using DAL.Entities;
 
@@ -11,27 +12,25 @@ namespace GUI.Model
     {
         private readonly DbRepository _repository;
 
-        public event EventHandler OriginalLoaded;
+        public event EventHandler StaticDataLoaded;
+        public event EventHandler MeasurementsLoaded;
 
         public GDL(DbRepository repository)
         {
             _repository = repository;
         }
 
-        public void LoadOriginal()
+        public void LoadStaticData()
         {
             const string originalUrl = "http://userportal.iha.dk/~jrt/i4dab/E14/HandIn4/GFKSC002_original.txt";
 
             var t = JSONDeserialisator.DeserialiseOriginalFile(StringDownloader.DownloadStringFromURL(originalUrl));
             
-            lock (_repository)
-            {
-                _repository.AddCollectionOfAppartments(t.Item1).Wait();
-                _repository.AddCollectionOfSensors(t.Item2).Wait();
-            }
+            _repository.AddCollectionOfAppartments(t.Item1).Wait();
+            _repository.AddCollectionOfSensors(t.Item2).Wait();
 
-            if (OriginalLoaded != null)
-                OriginalLoaded(this, new EventArgs());
+            if (StaticDataLoaded != null)
+                StaticDataLoaded(this, new EventArgs());
         }
 
         static public ICollection<Measurement> LoadJson(int nr)
@@ -47,14 +46,10 @@ namespace GUI.Model
         /// <param name="appartments">Collection of appartments to search from</param>
         /// <param name="sensorType">Sensor type to search from</param>
         /// <returns></returns>
-        public ICollection<Measurement> GetMeasurements(ICollection<Appartment> appartments, string sensorType )
+        public async Task<ICollection<Measurement>> GetMeasurements(ICollection<Appartment> appartments, string sensorType )
         {
-            lock (_repository)
-            {
-                var r = _repository.GetMeasurements(appartments, sensorType);
-                return r;
-            }
-            
+            var r = await _repository.GetMeasurements(appartments, sensorType);
+            return r;
         }
 
         /// <summary>
@@ -63,8 +58,7 @@ namespace GUI.Model
         /// <returns>Collection of appartments</returns>
         public ICollection<Appartment> GetAppartments()
         {
-            lock(_repository)
-                return _repository.Appartments;
+            return _repository.Appartments;
         }
 
         /// <summary>
@@ -73,8 +67,7 @@ namespace GUI.Model
         /// <returns>Collection of sensors</returns>
         public ICollection<Sensor> GetSensors()
         {
-            lock(_repository)
-                return _repository.Sensors;
+            return _repository.Sensors;
         }
     }
 }

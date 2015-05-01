@@ -10,53 +10,44 @@ namespace DAL
 {
     public class DbRepository
     {
-        private readonly Context _context;
-        private IRepository<Appartment> _appartmentRepos;
-        private IRepository<Sensor> _sensorRepos;
-        private IRepository<Measurement> _measureRepos;
+        private readonly IRepository<Appartment> _appartmentRepos;
+        private readonly IRepository<Sensor> _sensorRepos;
+        private readonly IRepository<Measurement> _measureRepos;
         public ICollection<Appartment> Appartments { get; set; }
         public ICollection<Sensor> Sensors { get; set; }
 
         public DbRepository()
         {
-                
-            _context = new Context();
-            _context.Database.ExecuteSqlCommand("TRUNCATE TABLE Measurements");
-            _context.Database.ExecuteSqlCommand("DELETE FROM Sensors");
-            _context.Database.ExecuteSqlCommand("DELETE FROM Appartments");
-            _context.Database.ExecuteSqlCommand("TRUNCATE TABLE Logs");
-            _context.Database.ExecuteSqlCommand("DBCC CHECKIDENT (Sensors, RESEED, 0)");
-            _context.Database.ExecuteSqlCommand("DBCC CHECKIDENT (Appartments, RESEED, 0)");
+            var context = new Context();
+            context.Database.ExecuteSqlCommand("TRUNCATE TABLE Measurements");
+            context.Database.ExecuteSqlCommand("DELETE FROM Sensors");
+            context.Database.ExecuteSqlCommand("DELETE FROM Appartments");
+            context.Database.ExecuteSqlCommand("TRUNCATE TABLE Logs");
+            context.Database.ExecuteSqlCommand("DBCC CHECKIDENT (Sensors, RESEED, 0)");
+            context.Database.ExecuteSqlCommand("DBCC CHECKIDENT (Appartments, RESEED, 0)");
 
-            _appartmentRepos = new Repository<Appartment>(_context);
-            _sensorRepos = new Repository<Sensor>(_context);
-            _measureRepos = new Repository<Measurement>(_context);
+            _appartmentRepos = new Repository<Appartment>(context);
+            _sensorRepos = new Repository<Sensor>(context);
+            _measureRepos = new Repository<Measurement>(context);
             Appartments = new List<Appartment>();
             Sensors = new List<Sensor>();
         }
 
-        public ICollection<Measurement> GetMeasurements(ICollection<Appartment> appartments, string sensorType)
+        public async Task<ICollection<Measurement>> GetMeasurements(ICollection<Appartment> appartments, string sensorType)
         {
-            List<Measurement> returnList = new List<Measurement>();
+            var returnList = new List<Measurement>();
 
-            lock (_measureRepos)
             foreach (var appartment in appartments)
             {
                 var appartment1 = appartment;
-                    returnList.AddRange(
-                        _measureRepos
-                        .FindAllDoubleWhere(
-                            m => m.AppartmentId == appartment1.AppartmentId,
-                            m => m.Sensor.Description == sensorType)
-                        .Result.ToList()
+                var measurements = await _measureRepos
+                    .FindAllDoubleWhere(m => m.AppartmentId == appartment1.AppartmentId,
+                        m => m.Sensor.Description == sensorType);
+                returnList.AddRange(
+                    measurements.ToList()
                 );
             }
             return returnList;
-        }
-
-        public Appartment AppartmentWithMeasurements(int id)
-        {
-            return _appartmentRepos.FindWithInclude(m => m.Measurements.Select(s => s.Sensor), a => a.AppartmentId == id).Result;
         }
 
         public async Task AddCollectionOfAppartments(ICollection<Appartment> appartments)
@@ -71,10 +62,9 @@ namespace DAL
             Sensors = _sensorRepos.GetAll().Result;
         }
 
-        public void AddCollectionOfMeasurements(ICollection<Measurement> measurements)
+        public async Task AddCollectionOfMeasurements(ICollection<Measurement> measurements)
         {
-            lock (_measureRepos)
-                _measureRepos.AddCollection(measurements);
+            await _measureRepos.AddCollection(measurements);
         }
     }
 }
